@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MailRobot" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="ch.heigvd.api.mailrobot.AppStarter" />
+    <module name="MailRobot" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
