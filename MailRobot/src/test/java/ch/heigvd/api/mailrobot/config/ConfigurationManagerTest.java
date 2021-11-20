@@ -3,11 +3,14 @@ package ch.heigvd.api.mailrobot.config;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.MissingFormatArgumentException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConfigurationManagerTest {
     private static final String CORRECT_CONFIG = "config.properties";
+    private static final String MISSING_PROPERTY_CONFIG = "missingPropertyConfig.properties";
+    private static final String INVALID_PROPERTY_CONFIG = "invalidConfig.properties";
     private static final String EMPTY_FILE = "empty.txt";
     private static final String IMAGINARY_FILE = "unknown.txt";
     private static final String MESSAGE_FILE = "messages.txt";
@@ -53,5 +56,15 @@ class ConfigurationManagerTest {
         assertThrows(IllegalArgumentException.class, () -> new ConfigurationManager(CORRECT_CONFIG, MESSAGE_FILE, INVALID_TARGET_FILE));
     }
 
-    //todo tests si données malformatées
+    @Test
+    void itShouldThrowOnMissingMandatoryProperty() {
+        assertThrows(MissingFormatArgumentException.class,
+                () -> new ConfigurationManager(MISSING_PROPERTY_CONFIG, MESSAGE_FILE, INVALID_TARGET_FILE));
+    }
+
+    @Test
+    void itShouldThrowOnInvalidProperty() {
+        assertThrows(NumberFormatException.class,
+                () -> new ConfigurationManager(INVALID_PROPERTY_CONFIG, MESSAGE_FILE, INVALID_TARGET_FILE));
+    }
 }

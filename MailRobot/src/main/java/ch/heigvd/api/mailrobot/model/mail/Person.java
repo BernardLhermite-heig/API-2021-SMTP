@@ -11,7 +11,7 @@ public class Person {
    private String lastName;
    @Getter
    private String address;
-   
+
    public Person(String[] args) {
       if (args.length != NB_ARGS)
          throw new IllegalArgumentException(NB_ARGS + " arguments are required.");

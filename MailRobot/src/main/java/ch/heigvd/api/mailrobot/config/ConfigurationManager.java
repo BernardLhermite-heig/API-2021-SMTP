@@ -1,7 +1,9 @@
 package ch.heigvd.api.mailrobot.config;
 
 import ch.heigvd.api.mailrobot.model.mail.Person;
+import ch.heigvd.api.mailrobot.util.MandatoryProperties;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -33,7 +35,7 @@ public class ConfigurationManager {
     private final List<String> messages;
 
 
-    public ConfigurationManager(String configFile, String messagesFile, String personFile) throws IOException {
+    public ConfigurationManager(@NonNull String configFile, @NonNull String messagesFile, @NonNull String personFile) throws IOException {
         loadProperties(configFile);
 
         messages = loadMessages(messagesFile);
@@ -50,7 +52,7 @@ public class ConfigurationManager {
     private InputStream getResourceAsStream(String fileName) throws IOException {
         InputStream in = ConfigurationManager.class.getResourceAsStream(parseFileName(fileName));
         if (in == null)
-            throw new IOException("File " + fileName + " not found");
+            throw new IOException("File " + fileName + " not found.");
 
         return in;
     }
@@ -65,7 +67,7 @@ public class ConfigurationManager {
     private String getResource(String fileName) throws IOException {
         URL path = ConfigurationManager.class.getResource(parseFileName(fileName));
         if (path == null)
-            throw new IOException("File " + fileName + " not found");
+            throw new IOException("File " + fileName + " not found.");
 
         return path.getPath();
     }
@@ -89,20 +91,19 @@ public class ConfigurationManager {
      */
     private void loadProperties(String fileName) throws IOException {
         try (InputStream in = getResourceAsStream(fileName)) {
-            Properties prop = new Properties();
+            MandatoryProperties prop = new MandatoryProperties();
             prop.load(in);
 
-            //todo check donnée
-            serverAddress = prop.getProperty("serverAddress");
-            serverPort = Integer.parseInt(prop.getProperty("serverPort"));
-            numberOfGroups = Integer.parseInt(prop.getProperty("numberOfGroups"));
+            serverAddress = prop.getMandatoryProperty("serverAddress");
+            serverPort = Integer.parseInt(prop.getMandatoryProperty("serverPort"));
+            numberOfGroups = Integer.parseInt(prop.getMandatoryProperty("numberOfGroups"));
             messageSeparator = prop.getProperty("messageSeparator", DEFAULT_MESSAGE_SEPARATOR);
             personSeparator = prop.getProperty("personSeparator", DEFAULT_PERSON_SEPARATOR);
 
-            String witnesses = prop.getProperty("witnessAddress");
+            String witnesses = prop.getMandatoryProperty("witnessAddress");
             witnessesAddresses = new ArrayList<>(Arrays.asList(witnesses.split(":")));
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error while parsing configuration file. ", e);
+        } catch (MissingFormatArgumentException | NumberFormatException | IOException e) {
+            LOG.log(Level.SEVERE, "Error while parsing configuration file " + fileName + ".", e);
             throw e;
         }
     }
@@ -123,7 +124,7 @@ public class ConfigurationManager {
                 messages.add(scan.next());
             }
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error while parsing messages file. ", e);
+            LOG.log(Level.SEVERE, "Error while parsing messages file " + fileName + ".", e);
             throw e;
         }
         return messages;
@@ -144,7 +145,7 @@ public class ConfigurationManager {
                 persons.add(new Person(person));
             }
         } catch (IOException | IllegalArgumentException e) {
-            LOG.log(Level.SEVERE, "Error while parsing persons file. ", e);
+            LOG.log(Level.SEVERE, "Error while parsing persons file " + fileName + ".", e);
             throw e;
         }
         return persons;
