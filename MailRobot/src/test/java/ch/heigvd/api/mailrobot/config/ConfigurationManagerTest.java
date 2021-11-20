@@ -9,9 +9,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ConfigurationManagerTest {
     private static final String CORRECT_CONFIG = "config.properties";
     private static final String EMPTY_FILE = "empty.txt";
-    private static final String INVALID_FILE = "unknown.txt";
+    private static final String IMAGINARY_FILE = "unknown.txt";
     private static final String MESSAGE_FILE = "messages.txt";
     private static final String TARGET_FILE = "targets.txt";
+    private static final String INVALID_TARGET_FILE = "invalidTargets.txt";
     private static final String ADDRESS = "localhost";
 
     private static final int PORT = 25;
@@ -34,9 +35,9 @@ class ConfigurationManagerTest {
 
     @Test
     void itShouldThrowOnInvalidFile() {
-        assertThrows(IOException.class, () -> new ConfigurationManager(INVALID_FILE, EMPTY_FILE, EMPTY_FILE));
-        assertThrows(IOException.class, () -> new ConfigurationManager(CORRECT_CONFIG, INVALID_FILE, EMPTY_FILE));
-        assertThrows(IOException.class, () -> new ConfigurationManager(CORRECT_CONFIG, EMPTY_FILE, INVALID_FILE));
+        assertThrows(IOException.class, () -> new ConfigurationManager(IMAGINARY_FILE, EMPTY_FILE, EMPTY_FILE));
+        assertThrows(IOException.class, () -> new ConfigurationManager(CORRECT_CONFIG, IMAGINARY_FILE, EMPTY_FILE));
+        assertThrows(IOException.class, () -> new ConfigurationManager(CORRECT_CONFIG, EMPTY_FILE, IMAGINARY_FILE));
     }
 
     @Test
@@ -45,6 +46,11 @@ class ConfigurationManagerTest {
 
         assertEquals(MESSAGE_COUNT, manager.getMessages().size());
         assertEquals(TARGET_COUNT, manager.getPersons().size());
+    }
+
+    @Test
+    void itShouldThrowOnInvalidPersonFile() {
+        assertThrows(IllegalArgumentException.class, () -> new ConfigurationManager(CORRECT_CONFIG, MESSAGE_FILE, INVALID_TARGET_FILE));
     }
 
     //todo tests si données malformatées

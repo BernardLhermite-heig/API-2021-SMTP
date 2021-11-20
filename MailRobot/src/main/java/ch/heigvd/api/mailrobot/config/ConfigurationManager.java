@@ -141,10 +141,9 @@ public class ConfigurationManager {
         try (BufferedReader br = new BufferedReader(new FileReader(getResource(fileName), StandardCharsets.UTF_8))) {
             for (String line; br.ready() && (line = br.readLine()) != null; ) {
                 String[] person = line.split(personSeparator);
-                //todo
-                //persons.add(new Person());
+                persons.add(new Person(person));
             }
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             LOG.log(Level.SEVERE, "Error while parsing persons file. ", e);
             throw e;
         }

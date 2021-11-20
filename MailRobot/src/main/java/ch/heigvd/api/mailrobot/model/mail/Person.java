@@ -1,24 +1,23 @@
 package ch.heigvd.api.mailrobot.model.mail;
 
+import lombok.Getter;
+
 public class Person {
+   private static final int NB_ARGS = 3;
 
+   @Getter
    private String firstName;
+   @Getter
    private String lastName;
-   private String adress;
+   @Getter
+   private String address;
+   
+   public Person(String[] args) {
+      if (args.length != NB_ARGS)
+         throw new IllegalArgumentException(NB_ARGS + " arguments are required.");
 
-   public Person(String firstName, String lastName, String adress) {
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.adress = adress;
-   }
-
-   public String getFirstName() {
-      return firstName;
-   }
-   public String getLastName() {
-      return lastName;
-   }
-   public String getAdress() {
-      return adress;
+      firstName = args[0];
+      lastName = args[1];
+      address = args[2];
    }
 }
