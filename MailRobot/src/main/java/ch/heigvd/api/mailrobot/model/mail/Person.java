@@ -1,6 +1,7 @@
 package ch.heigvd.api.mailrobot.model.mail;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 public class Person {
    private static final int NB_ARGS = 3;
@@ -12,12 +13,17 @@ public class Person {
    @Getter
    private String address;
 
-   public Person(String[] args) {
+   public Person(@NonNull String[] args) {
       if (args.length != NB_ARGS)
          throw new IllegalArgumentException(NB_ARGS + " arguments are required.");
 
       firstName = args[0];
       lastName = args[1];
       address = args[2];
+   }
+
+   @Override
+   public String toString() {
+      return firstName + " " + lastName + " <" + address + ">";
    }
 }

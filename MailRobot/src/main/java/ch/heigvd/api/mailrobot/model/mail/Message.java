@@ -1,45 +1,77 @@
 package ch.heigvd.api.mailrobot.model.mail;
 
+import lombok.Getter;
+import lombok.NonNull;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Modélisation d'un email.
+ *
+ * @author Stéphane Marengo
+ * @author Loris Marzullo
+ */
 public class Message {
-
-   private String from;
-   private String to;
-   private String cc;
+   @Getter
+   private Person from;
+   private List<Person> recipients;
+   private List<Person> hiddenRecipients;
+   @Getter
    private String subject;
-   private String text;
+   @Getter
+   private String body;
 
-   public String getFrom() {
-      return from;
-   }
-   public void setFrom(String from) {
+   /**
+    * Créé un message avec l'expéditeur, le titre et le contenu fourni.
+    *
+    * @param from    l'expéditeur
+    * @param subject le titre
+    * @param body    le contenu
+    */
+   public Message(@NonNull Person from, @NonNull String subject, @NonNull String body) {
       this.from = from;
-   }
-
-   public String getTo() {
-      return to;
-   }
-   public void setTo(String to) {
-      this.to = to;
-   }
-
-   public String getCc() {
-      return cc;
-   }
-   public void setCc(String cc) {
-      this.cc = cc;
-   }
-
-   public String getSubject() {
-      return subject;
-   }
-   public void setSubject(String subject) {
       this.subject = subject;
+      this.body = body;
+
+      recipients = new LinkedList<>();
+      hiddenRecipients = new LinkedList<>();
    }
 
-   public String getText() {
-      return text;
+   /**
+    * Ajoute la personne passée en paramètre dans la liste des destinataires.
+    *
+    * @param person le destinataire
+    */
+   public void addRecipient(@NonNull Person person) {
+      recipients.add(person);
    }
-   public void setText(String text) {
-      this.text = text;
+
+   /**
+    * Ajoute la personne passée en paramètre dans la liste des destinataires cachés.
+    *
+    * @param person le destinataire caché
+    */
+   public void addHiddenRecipient(@NonNull Person person) {
+      hiddenRecipients.add(person);
+   }
+
+   /**
+    * Retourne une liste non modifiable des destinataires.
+    *
+    * @return la liste non modifiable
+    */
+   public List<Person> getRecipients() {
+      return Collections.unmodifiableList(recipients);
+   }
+
+   /**
+    * Retourne une liste non modifiable des destinataires cachés.
+    *
+    * @return la liste non modifiable
+    */
+   public List<Person> getHiddenRecipients() {
+      return Collections.unmodifiableList(hiddenRecipients);
    }
 }

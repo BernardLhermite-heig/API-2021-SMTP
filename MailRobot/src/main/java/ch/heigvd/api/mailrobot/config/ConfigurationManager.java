@@ -15,6 +15,14 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
+/**
+ * Classe permettant de lire les différents fichiers nécessaires au bon fonctionnement
+ * du MailRobot
+ *
+ * @author Stéphane Marengo
+ * @author Loris Marzullo
+ */
 public class ConfigurationManager {
     private final static Logger LOG = Logger.getLogger(ConfigurationManager.class.getName());
     private static final String DEFAULT_MESSAGE_SEPARATOR = "---";
@@ -101,6 +109,7 @@ public class ConfigurationManager {
             personSeparator = prop.getProperty("personSeparator", DEFAULT_PERSON_SEPARATOR);
 
             String witnesses = prop.getMandatoryProperty("witnessAddress");
+            //todo ajouter dans fichier le ':'
             witnessesAddresses = new ArrayList<>(Arrays.asList(witnesses.split(":")));
         } catch (MissingFormatArgumentException | NumberFormatException | IOException e) {
             LOG.log(Level.SEVERE, "Error while parsing configuration file " + fileName + ".", e);
@@ -151,10 +160,20 @@ public class ConfigurationManager {
         return persons;
     }
 
+    /**
+     * Retourne une liste non modifiable de personnes.
+     *
+     * @return la liste non modifiable
+     */
     public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
     }
 
+    /**
+     * Retourne une liste non modifiable de messages.
+     *
+     * @return la liste non modifiable
+     */
     public List<String> getMessages() {
         return Collections.unmodifiableList(messages);
     }

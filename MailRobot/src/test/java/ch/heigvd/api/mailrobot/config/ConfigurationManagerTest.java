@@ -7,6 +7,10 @@ import java.util.MissingFormatArgumentException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Stéphane Marengo
+ * @author Loris Marzullo
+ */
 class ConfigurationManagerTest {
     private static final String CORRECT_CONFIG = "config.properties";
     private static final String MISSING_PROPERTY_CONFIG = "missingPropertyConfig.properties";
