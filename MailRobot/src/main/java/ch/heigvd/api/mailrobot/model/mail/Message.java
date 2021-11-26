@@ -15,13 +15,13 @@ import java.util.List;
  */
 public class Message {
    @Getter
-   private Person from;
-   private List<Person> recipients;
-   private List<Person> hiddenRecipients;
+   private final Person from;
+   private final List<Person> recipients;
+   private final List<Person> hiddenRecipients;
    @Getter
-   private String subject;
+   private final String subject;
    @Getter
-   private String body;
+   private final String body;
 
    /**
     * Créé un message avec l'expéditeur, le titre et le contenu fourni.

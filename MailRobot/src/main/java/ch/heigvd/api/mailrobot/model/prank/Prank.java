@@ -1,33 +1,49 @@
 package ch.heigvd.api.mailrobot.model.prank;
 
-import ch.heigvd.api.mailrobot.model.mail.Person;
+import lombok.Getter;
 
-import java.util.ArrayList;
+import ch.heigvd.api.mailrobot.model.mail.Person;
+import ch.heigvd.api.mailrobot.model.mail.Group;
+
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * Modélisation d'un prank.
+ *
+ * @author Stéphane Marengo
+ * @author Loris Marzullo
+ */
 public class Prank {
-   private Person victimSender;
-   private final List<Person> recipientsVictims = new ArrayList<>();
-   private String message;
+   @Getter
+   private final Person victimSender;
+   private final List<Person> recipientsVictims;
+   @Getter
+   private final String message;
 
-   public Person getVictimSender() {
-      return victimSender;
-   }
-   public void setVictimSender(Person victimSender) {
-      this.victimSender = victimSender;
-   }
+   /**
+    * Créé un prank, défini par un groupe de victimes et un message. La première personne du groupe est l'expéditeur du
+    * message et les personnes restantes sont les destinataires.
+    *
+    * @param group   groupe de victimes
+    * @param message le message
+    */
+   public Prank(Group group, String message) {
 
-   public List<Person> getRecipientsVictims() {
-      return new ArrayList<>(recipientsVictims);
-   }
-   public void addRecipientVictim(Person p) {
-      recipientsVictims.add(p);
-   }
+      // TODO : Tester que le groupe a assez de personnes ?
 
-   public String getMessage() {
-      return message;
-   }
-   public void setMessage(String message) {
+      List<Person> victims = group.getPersons();
+      this.victimSender = victims.get(0);
+      this.recipientsVictims = victims.subList(1, victims.size());
       this.message = message;
+   }
+
+   /**
+    * Retourne une liste non modifiable des destinataires.
+    *
+    * @return la liste non modifiable
+    */
+   public List<Person> getRecipientsVictims() {
+      return Collections.unmodifiableList(recipientsVictims);
    }
 }
