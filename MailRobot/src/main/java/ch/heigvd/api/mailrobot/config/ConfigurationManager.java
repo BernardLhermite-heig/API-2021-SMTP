@@ -27,6 +27,7 @@ public class ConfigurationManager {
     private final static Logger LOG = Logger.getLogger(ConfigurationManager.class.getName());
     private static final String DEFAULT_MESSAGE_SEPARATOR = "---";
     private static final String DEFAULT_PERSON_SEPARATOR = ":";
+    private static final String DEFAULT_WITNESS_SEPARATOR = ",";
 
     @Getter
     private String serverAddress;
@@ -107,10 +108,10 @@ public class ConfigurationManager {
             numberOfGroups = Integer.parseInt(prop.getMandatoryProperty("numberOfGroups"));
             messageSeparator = prop.getProperty("messageSeparator", DEFAULT_MESSAGE_SEPARATOR);
             personSeparator = prop.getProperty("personSeparator", DEFAULT_PERSON_SEPARATOR);
-
-            String witnesses = prop.getMandatoryProperty("witnessAddress");
-            //todo ajouter dans fichier le ':'
-            witnessesAddresses = new ArrayList<>(Arrays.asList(witnesses.split(":")));
+            
+            String witnessSeparator = prop.getProperty("witnessSeparator", DEFAULT_WITNESS_SEPARATOR);
+            String witnesses = prop.getMandatoryProperty("witnessAddresses");
+            witnessesAddresses = new ArrayList<>(Arrays.asList(witnesses.split(witnessSeparator)));
         } catch (MissingFormatArgumentException | NumberFormatException | IOException e) {
             LOG.log(Level.SEVERE, "Error while parsing configuration file " + fileName + ".", e);
             throw e;

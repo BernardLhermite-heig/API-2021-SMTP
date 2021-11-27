@@ -23,11 +23,11 @@ class ConfigurationManagerTest {
     private static final String ADDRESS = "localhost";
 
     private static final int PORT = 25;
-    private static final int NB_GROUPS = 10;
-    private static final String[] WITNESS_ADDRESS = {"witness.address@heig-vd.ch"};
+    private static final int NB_GROUPS = 2;
+    private static final String[] WITNESS_ADDRESSES = {"witness.address@heig-vd.ch", "witness2.address@heig-vd.ch"};
 
     private static final int MESSAGE_COUNT = 4;
-    private static final int TARGET_COUNT = 5;
+    private static final int TARGET_COUNT = 9;
 
     @Test
     void itShouldCorrectlyReadTheConfigFile() throws IOException {
@@ -37,7 +37,7 @@ class ConfigurationManagerTest {
         assertEquals(ADDRESS, manager.getServerAddress());
         assertEquals(PORT, manager.getServerPort());
         assertEquals(NB_GROUPS, manager.getNumberOfGroups());
-        assertArrayEquals(WITNESS_ADDRESS, manager.getWitnessesAddresses().toArray());
+        assertArrayEquals(WITNESS_ADDRESSES, manager.getWitnessesAddresses().toArray());
     }
 
     @Test
