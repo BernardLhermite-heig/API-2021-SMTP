@@ -118,7 +118,7 @@ public class ConfigurationManager {
      * @throws IOException si le fichier ne peut pas être lu
      */
     private List<String> loadMessages(String fileName) throws IOException {
-        List<String> messages = new LinkedList<>();
+        List<String> messages = new ArrayList<>();
 
         try (Scanner scan = new Scanner(getResourceAsStream(fileName), StandardCharsets.UTF_8)) {
             scan.useDelimiter(messageSeparator);

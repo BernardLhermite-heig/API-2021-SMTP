@@ -4,10 +4,7 @@ import ch.heigvd.api.mailrobot.config.ConfigurationManager;
 import ch.heigvd.api.mailrobot.model.mail.Group;
 import ch.heigvd.api.mailrobot.model.mail.Person;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Classe permettant de générer une liste de pranks à partir d'une configuration donnée
@@ -34,7 +31,9 @@ public class PrankGenerator {
     */
    public PrankGenerator(ConfigurationManager config) throws IllegalArgumentException {
       this.config = config;
-      persons = config.getPersons();
+
+      // Créé une copie pour pouvoir la mélanger
+      persons = new LinkedList<>(config.getPersons());
 
       int nbGroups = config.getNumberOfGroups();
       if (nbGroups <= 0)
@@ -62,9 +61,9 @@ public class PrankGenerator {
       List<Prank> pranks = new ArrayList<>();
 
       // Crée un prank pour chaque groupe
-      List<Group> groups = generateGroups(nbGroups, groupSize, nbPersons % nbGroups);
-      for (int i = 0; i < nbGroups; i++) {
-         pranks.add(new Prank(groups.get(i), messages.get(RANDOM.nextInt(messages.size()))));
+      List<Group> groups = generateGroups(nbGroups, groupSize);
+      for (Group group : groups) {
+         pranks.add(new Prank(group, messages.get(RANDOM.nextInt(messages.size()))));
       }
       return pranks;
 
@@ -73,20 +72,26 @@ public class PrankGenerator {
    /**
     * Génère et retourne une liste de groupes contenant les personnes de la configuration
     *
-    * @param nbrGroups         nombre de groupes à générer
-    * @param nbrPersonsInGroup nombre de personnes par groupe
+    * @param nbGroups  nombre de groupes à générer
+    * @param groupSize nombre de personnes par groupe
     * @return la liste des groupes
     */
-   private List<Group> generateGroups(int nbrGroups, int nbrPersonsInGroup, int nbrExtraPersons) {
-      List<Group> groups = new ArrayList<>();
+   private List<Group> generateGroups(int nbGroups, int groupSize) {
+      List<Group> groups = new LinkedList<>();
 
-      for (int i = 0; i < nbrGroups; i++)
-      {
+      Iterator<Person> it = persons.iterator();
+      for (int i = 0; i < nbGroups; i++) {
          Group group = new Group();
-         for (int j = 0; j < nbrPersonsInGroup + (i == nbrGroups - 1 ? nbrExtraPersons : 0); j++)
-         {
-            group.addPerson(persons.get(i * nbrPersonsInGroup + j));
+
+         for (int j = 0; j < groupSize; j++) {
+            group.addPerson(it.next());
          }
+
+         // Ajoute le surplus de personnes (nbGroups % groupSize) au dernier groupe
+         if (i == nbGroups - 1) {
+            it.forEachRemaining(group::addPerson);
+         }
+
          groups.add(group);
       }
       return groups;
