@@ -67,7 +67,7 @@ class ConfigurationManagerTest {
     }
 
     @Test
-    void itShouldThrowOnInvalidProperty() {
+    void itShouldThrowOnInvalidPort() {
         assertThrows(NumberFormatException.class,
                 () -> new ConfigurationManager(INVALID_PROPERTY_CONFIG, MESSAGE_FILE, INVALID_TARGET_FILE));
     }

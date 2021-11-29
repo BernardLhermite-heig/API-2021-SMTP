@@ -6,10 +6,9 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
@@ -35,16 +34,25 @@ public class ConfigurationManager {
     private int serverPort;
     @Getter
     private int numberOfGroups;
-    @Getter
-    private List<String> witnessesAddresses;
     private String messageSeparator;
     private String personSeparator;
 
-    private final List<Person> persons;
-    private final List<String> messages;
+    private List<String> witnessesAddresses;
+    private List<Person> persons;
+    private List<String> messages;
 
-
-    public ConfigurationManager(@NonNull String configFile, @NonNull String messagesFile, @NonNull String personFile) throws IOException {
+    /**
+     * Créé une instance et récupère les différentes informations des fichiers spécifiés.
+     *
+     * @param configFile   le fichier contenant la configuration
+     * @param messagesFile le fichier contenant les messages
+     * @param personFile   le fichier contenant les victimes
+     * @throws IOException                    si une erreur survient lors des traitements I/O
+     * @throws MissingFormatArgumentException si une propriété obligatoire est manquante dans la configuration
+     * @throws NumberFormatException          si le numéro de port n'est pas un entier valide
+     */
+    public ConfigurationManager(@NonNull String configFile, @NonNull String messagesFile, @NonNull String personFile)
+            throws IOException, MissingFormatArgumentException, NumberFormatException {
         loadProperties(configFile);
 
         messages = loadMessages(messagesFile);
@@ -67,21 +75,6 @@ public class ConfigurationManager {
     }
 
     /**
-     * Retourne le chemin complet du fichier de resource passé en paramètre.
-     *
-     * @param fileName le nom du fichier de resource
-     * @return le chemin complet du fichier
-     * @throws IOException si le fichier ne peut pas être ouvert
-     */
-    private String getResource(String fileName) throws IOException {
-        URL path = ConfigurationManager.class.getResource(parseFileName(fileName));
-        if (path == null)
-            throw new IOException("File " + fileName + " not found.");
-
-        return path.getPath();
-    }
-
-    /**
      * Ajoute un '/' au nom de fichier passé en paramètre si ce dernier est manquant.
      *
      * @param fileName le nom du fichier à traiter
@@ -93,7 +86,6 @@ public class ConfigurationManager {
 
     /**
      * Charge les données du fichier de propriétés passé en paramètre.
-     * // TODO throw si donnée manquante?
      *
      * @param fileName le fichier à lire
      * @throws IOException si le fichier ne peut pas être lu
@@ -149,7 +141,8 @@ public class ConfigurationManager {
     private List<Person> loadPersons(String fileName) throws IOException {
         List<Person> persons = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(getResource(fileName), StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(getResourceAsStream(fileName),
+                StandardCharsets.UTF_8))) {
             for (String line; br.ready() && (line = br.readLine()) != null; ) {
                 String[] person = line.split(personSeparator);
                 persons.add(new Person(person));
@@ -164,7 +157,7 @@ public class ConfigurationManager {
     /**
      * Retourne une liste non modifiable de personnes.
      *
-     * @return la liste non modifiable
+     * @return la liste des personnes
      */
     public List<Person> getPersons() {
         return Collections.unmodifiableList(persons);
@@ -173,9 +166,18 @@ public class ConfigurationManager {
     /**
      * Retourne une liste non modifiable de messages.
      *
-     * @return la liste non modifiable
+     * @return la liste des messages
      */
     public List<String> getMessages() {
         return Collections.unmodifiableList(messages);
+    }
+
+    /**
+     * Retourne une liste non modifiable de victimes.
+     *
+     * @return la liste des messages
+     */
+    public List<String> getWitnessesAddresses() {
+        return Collections.unmodifiableList(witnessesAddresses);
     }
 }

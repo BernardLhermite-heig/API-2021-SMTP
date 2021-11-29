@@ -44,8 +44,9 @@ public class SmtpClient {
      *
      * @param host l'adresse du serveur SMTP
      * @param port le port à utiliser
+     * @throws IllegalArgumentException si le port est invalide
      */
-    public SmtpClient(@NonNull String host, int port) {
+    public SmtpClient(@NonNull String host, int port) throws IllegalArgumentException {
         if (port <= 0)
             throw new IllegalArgumentException("Invalid port provided.");
 
@@ -60,8 +61,9 @@ public class SmtpClient {
      * @param mail   le message à envoyer
      * @param domain le domaine utilisé lors de la commande EHLO
      * @return vrai si l'envoi s'est déroulé correctement, faux sinon
+     * @throws IllegalArgumentException s'il n'y a pas de destinataire ou d'expéditeur
      */
-    public boolean send(@NonNull Message mail, @NonNull String domain) {
+    public boolean send(@NonNull Message mail, @NonNull String domain) throws IllegalArgumentException {
         List<Person> recipients = mail.getRecipients();
         List<Person> hiddenRecipients = mail.getHiddenRecipients();
         Person from = mail.getFrom();
@@ -241,11 +243,7 @@ public class SmtpClient {
      * @param person l'expéditeur
      */
     private void addFrom(@NonNull Person person) {
-        content.append("From: ")
-                .append(person.getFirstName())
-                .append(person.getLastName())
-                .append("<").append(person.getAddress()).append(">")
-                .append(EOL);
+        content.append("From: ").append(person).append(EOL);
     }
 
     /**
@@ -277,10 +275,10 @@ public class SmtpClient {
     }
 
     /**
-     * Ajoute le body au contenu du mail.
+     * Ajoute le texte au contenu du mail.
      * Remarque : la séquence de terminaison (CRLF . CRLF) est ajoutée au contenu.
      *
-     * @param body
+     * @param body le texte du mail
      */
     private void addBody(@NonNull String body) {
         content.append(EOL)
