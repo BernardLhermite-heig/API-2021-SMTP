@@ -1,5 +1,7 @@
 package ch.heigvd.api.mailrobot.model.mail;
 
+import lombok.NonNull;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,10 +13,10 @@ import java.util.List;
  * @author Loris Marzullo
  */
 public class Group {
-   private final List<Person> persons;
+   private List<Person> persons;
 
    /**
-    * Créé un groupe.
+    * Créé un groupe vide.
     */
    public Group() {
       persons = new LinkedList<>();
@@ -23,16 +25,16 @@ public class Group {
    /**
     * Ajoute la personne passée en paramètre au groupe.
     *
-    * @param person la personne
+    * @param person la personne à ajouter
     */
-   public void addPerson(Person person) {
+   public void addPerson(@NonNull Person person) {
       persons.add(person);
    }
 
    /**
-    * Retourne une liste non modifiable des personnes composant groupe.
+    * Retourne une liste non modifiable des personnes composant le groupe.
     *
-    * @return la liste non modifiable
+    * @return la liste des personnes
     */
    public List<Person> getPersons() {
       return Collections.unmodifiableList(persons);

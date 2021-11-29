@@ -13,14 +13,14 @@ public class Person {
    private static final int NB_ARGS = 3;
 
    @Getter
-   private final String firstName;
+   private String firstName;
    @Getter
-   private final String lastName;
+   private String lastName;
    @Getter
-   private final String address;
+   private String address;
 
    /**
-    * Créé une personne avec un nom, un prénom et une adresse mail.
+    * Créé une personne depuis un tableau de String.
     *
     * @param args tableau de String contenant le prénom, le nom et l'adresse mail de la personne
     */
@@ -33,6 +33,25 @@ public class Person {
       address = args[2];
    }
 
+   /**
+    * Créé une personne avec un nom, un prénom et une adresse mail.
+    *
+    * @param firstName le prénom de la personne
+    * @param lastName  le nom de la personne
+    * @param address   l'adresse mail de la personne
+    */
+   public Person(@NonNull String firstName, @NonNull String lastName, @NonNull String address) {
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.address = address;
+   }
+
+   /**
+    * Obtiens une chaîne de caractères représentant la personne de la forme :
+    * prénom nom <adresse>
+    *
+    * @return la chaîne de caractères
+    */
    @Override
    public String toString() {
       return firstName + " " + lastName + " <" + address + ">";

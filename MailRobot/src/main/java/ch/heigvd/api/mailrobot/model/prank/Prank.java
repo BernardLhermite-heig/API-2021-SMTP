@@ -1,40 +1,46 @@
 package ch.heigvd.api.mailrobot.model.prank;
 
-import lombok.Getter;
-
-import ch.heigvd.api.mailrobot.model.mail.Person;
 import ch.heigvd.api.mailrobot.model.mail.Group;
+import ch.heigvd.api.mailrobot.model.mail.Person;
+import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Modélisation d'un prank.
+ * Modélisation d'un prank, défini par un groupe de victimes et un message.
+ * Un prank doit posséder au minimum 2 victimes, à savoir un expéditeur et un destinataire.
  *
  * @author Stéphane Marengo
  * @author Loris Marzullo
  */
 public class Prank {
+   private static final int MINIMUM_GROUP_SIZE = 2;
+
    @Getter
-   private final Person victimSender;
-   private final List<Person> recipientsVictims;
+   private Person expeditor;
    @Getter
-   private final String message;
+   private String message;
+   private List<Person> recipients;
 
    /**
-    * Créé un prank, défini par un groupe de victimes et un message. La première personne du groupe est l'expéditeur du
+    * Créé un prank. La première personne du groupe est l'expéditeur du
     * message et les personnes restantes sont les destinataires.
     *
-    * @param group   groupe de victimes
+    * @param group   le groupe de victimes
     * @param message le message
+    * @throws IllegalArgumentException si le nombre de personnes dans le groupe est insuffisant
     */
-   public Prank(Group group, String message) {
-
-      // TODO : Tester que le groupe a assez de personnes ?
-
+   public Prank(@NonNull Group group, @NonNull String message) throws IllegalArgumentException {
       List<Person> victims = group.getPersons();
-      this.victimSender = victims.get(0);
-      this.recipientsVictims = victims.subList(1, victims.size());
+
+      if (victims.size() < MINIMUM_GROUP_SIZE)
+         throw new IllegalArgumentException("Le groupe doit être composé au minimum de " + MINIMUM_GROUP_SIZE +
+                 " personnes");
+
+      expeditor = victims.get(0);
+      recipients = victims.subList(1, victims.size());
       this.message = message;
    }
 
@@ -43,7 +49,7 @@ public class Prank {
     *
     * @return la liste non modifiable
     */
-   public List<Person> getRecipientsVictims() {
-      return Collections.unmodifiableList(recipientsVictims);
+   public List<Person> getRecipients() {
+      return Collections.unmodifiableList(recipients);
    }
 }

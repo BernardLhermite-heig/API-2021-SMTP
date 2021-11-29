@@ -15,20 +15,20 @@ import java.util.List;
  */
 public class Message {
    @Getter
-   private final Person from;
-   private final List<Person> recipients;
-   private final List<Person> hiddenRecipients;
+   private Person from;
+   private List<Person> recipients;
+   private List<Person> hiddenRecipients;
    @Getter
-   private final String subject;
+   private String subject;
    @Getter
-   private final String body;
+   private String body;
 
    /**
     * Créé un message avec l'expéditeur, le titre et le contenu fourni.
     *
-    * @param from    l'expéditeur
-    * @param subject le titre
-    * @param body    le contenu
+    * @param from    l'expéditeur du message
+    * @param subject le titre du message
+    * @param body    le contenu du message
     */
    public Message(@NonNull Person from, @NonNull String subject, @NonNull String body) {
       this.from = from;
@@ -42,7 +42,7 @@ public class Message {
    /**
     * Ajoute la personne passée en paramètre dans la liste des destinataires.
     *
-    * @param person le destinataire
+    * @param person le destinataire à ajouter
     */
    public void addRecipient(@NonNull Person person) {
       recipients.add(person);
@@ -51,7 +51,7 @@ public class Message {
    /**
     * Ajoute la personne passée en paramètre dans la liste des destinataires cachés.
     *
-    * @param person le destinataire caché
+    * @param person le destinataire caché à ajouter
     */
    public void addHiddenRecipient(@NonNull Person person) {
       hiddenRecipients.add(person);
@@ -60,7 +60,7 @@ public class Message {
    /**
     * Retourne une liste non modifiable des destinataires.
     *
-    * @return la liste non modifiable
+    * @return la liste des destinataires
     */
    public List<Person> getRecipients() {
       return Collections.unmodifiableList(recipients);
@@ -69,7 +69,7 @@ public class Message {
    /**
     * Retourne une liste non modifiable des destinataires cachés.
     *
-    * @return la liste non modifiable
+    * @return la liste des destinataires cachés
     */
    public List<Person> getHiddenRecipients() {
       return Collections.unmodifiableList(hiddenRecipients);

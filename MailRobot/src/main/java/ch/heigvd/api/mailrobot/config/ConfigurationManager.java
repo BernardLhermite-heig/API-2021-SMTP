@@ -16,8 +16,9 @@ import java.util.logging.Logger;
 
 
 /**
- * Classe permettant de lire les différents fichiers nécessaires au bon fonctionnement
- * du MailRobot
+ * Classe permettant de lire les différents fichiers de configuration.
+ * <p>
+ * Remarque : le manager se contente de lire les valeurs sans les valider.
  *
  * @author Stéphane Marengo
  * @author Loris Marzullo
@@ -49,7 +50,7 @@ public class ConfigurationManager {
      * @param personFile   le fichier contenant les victimes
      * @throws IOException                    si une erreur survient lors des traitements I/O
      * @throws MissingFormatArgumentException si une propriété obligatoire est manquante dans la configuration
-     * @throws NumberFormatException          si le numéro de port n'est pas un entier valide
+     * @throws NumberFormatException          si une valeur numérique ne peut pas être convertie
      */
     public ConfigurationManager(@NonNull String configFile, @NonNull String messagesFile, @NonNull String personFile)
             throws IOException, MissingFormatArgumentException, NumberFormatException {

@@ -44,7 +44,7 @@ public class SmtpClient {
      *
      * @param host l'adresse du serveur SMTP
      * @param port le port à utiliser
-     * @throws IllegalArgumentException si le port est invalide
+     * @throws IllegalArgumentException si le port n'est pas strictement positif
      */
     public SmtpClient(@NonNull String host, int port) throws IllegalArgumentException {
         if (port <= 0)
