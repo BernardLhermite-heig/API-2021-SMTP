@@ -33,7 +33,7 @@ public class PrankGenerator {
       this.config = config;
 
       // Créé une copie pour pouvoir la mélanger
-      persons = new LinkedList<>(config.getPersons());
+      persons = new LinkedList<>(config.getTargets());
 
       int nbGroups = config.getNumberOfGroups();
       if (nbGroups <= 0)
@@ -72,8 +72,8 @@ public class PrankGenerator {
    /**
     * Génère et retourne une liste de groupes contenant les personnes de la configuration
     *
-    * @param nbGroups  nombre de groupes à générer
-    * @param groupSize nombre de personnes par groupe
+    * @param nbGroups  le nombre de groupes à générer
+    * @param groupSize le nombre de personnes par groupe
     * @return la liste des groupes
     */
    private List<Group> generateGroups(int nbGroups, int groupSize) {

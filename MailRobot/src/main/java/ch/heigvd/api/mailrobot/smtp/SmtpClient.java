@@ -68,18 +68,18 @@ public class SmtpClient {
         List<Person> hiddenRecipients = mail.getHiddenRecipients();
         Person from = mail.getFrom();
 
-        if (recipients.isEmpty() || from.getAddress().isEmpty()) {
-            throw new IllegalArgumentException("Missing recipients or destination address.");
+        if (recipients.isEmpty()) {
+            throw new IllegalArgumentException("Missing recipients.");
         }
 
         try {
             socket = new Socket(HOST, PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
-            
+
             if (!read(CODE_READY)
                     || !sendHello(domain)
-                    || !sendMailFrom(from.getAddress())
+                    || !sendMailFrom(from.getEmail())
                     || !sendMailTo(recipients)
                     || !sendMailTo(hiddenRecipients)
                     || !sendData()) {
@@ -211,7 +211,7 @@ public class SmtpClient {
      */
     private boolean sendMailTo(@NonNull List<Person> recipients) throws IOException {
         for (Person p : recipients) {
-            if (!sendAndRead("RCPT TO:<" + p.getAddress() + ">", CODE_OK)) {
+            if (!sendAndRead("RCPT TO:<" + p.getEmail() + ">", CODE_OK)) {
                 return false;
             }
         }

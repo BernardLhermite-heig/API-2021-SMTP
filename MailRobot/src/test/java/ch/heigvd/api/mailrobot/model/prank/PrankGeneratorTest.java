@@ -1,5 +1,6 @@
 package ch.heigvd.api.mailrobot.model.prank;
 
+import ch.heigvd.api.mailrobot.TestWithFiles;
 import ch.heigvd.api.mailrobot.config.ConfigurationManager;
 import org.junit.jupiter.api.Test;
 
@@ -8,15 +9,13 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PrankGeneratorTest {
-   private static final String CORRECT_CONFIG = "config.properties";
-   private static final String MESSAGE_FILE = "messages.txt";
-   private static final String TARGET_FILE = "targets.txt";
-
+class PrankGeneratorTest extends TestWithFiles {
    @Test
    void itShouldGeneratePranks() throws IOException {
-      ConfigurationManager config = new ConfigurationManager(CORRECT_CONFIG, MESSAGE_FILE, TARGET_FILE);
+      ConfigurationManager config = new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, TARGETS_FILE);
 
       List<Prank> prankList = new PrankGenerator(config).generatePranks();
+
+      assertEquals(2, prankList.size());
    }
 }

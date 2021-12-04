@@ -8,42 +8,31 @@ import lombok.NonNull;
  *
  * @author Stéphane Marengo
  * @author Loris Marzullo
+ *
  */
 public class Person {
-   private static final int NB_ARGS = 3;
-
    @Getter
    private String firstName;
    @Getter
    private String lastName;
    @Getter
-   private String address;
-
-   /**
-    * Créé une personne depuis un tableau de String.
-    *
-    * @param args tableau de String contenant le prénom, le nom et l'adresse mail de la personne
-    */
-   public Person(@NonNull String[] args) {
-      if (args.length != NB_ARGS)
-         throw new IllegalArgumentException(NB_ARGS + " arguments are required.");
-
-      firstName = args[0];
-      lastName = args[1];
-      address = args[2];
-   }
+   private String email;
 
    /**
     * Créé une personne avec un nom, un prénom et une adresse mail.
     *
     * @param firstName le prénom de la personne
     * @param lastName  le nom de la personne
-    * @param address   l'adresse mail de la personne
+    * @param email     l'adresse mail de la personne
+    * @throws IllegalArgumentException si l'email est vide
     */
-   public Person(@NonNull String firstName, @NonNull String lastName, @NonNull String address) {
+   public Person(@NonNull String firstName, @NonNull String lastName, @NonNull String email) {
+      if (email.isEmpty())
+         throw new IllegalArgumentException("Email cannot be empty.");
+
       this.firstName = firstName;
       this.lastName = lastName;
-      this.address = address;
+      this.email = email;
    }
 
    /**
@@ -52,8 +41,7 @@ public class Person {
     *
     * @return la chaîne de caractères
     */
-   @Override
    public String toString() {
-      return firstName + " " + lastName + " <" + address + ">";
+      return firstName + " " + lastName + " <" + email + ">";
    }
 }

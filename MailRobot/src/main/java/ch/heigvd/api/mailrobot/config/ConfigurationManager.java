@@ -1,34 +1,35 @@
 package ch.heigvd.api.mailrobot.config;
 
 import ch.heigvd.api.mailrobot.model.mail.Person;
-import ch.heigvd.api.mailrobot.util.MandatoryProperties;
+import ch.heigvd.api.mailrobot.util.CustomProperties;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import java.util.regex.Pattern;
 
 /**
- * Classe permettant de lire les différents fichiers de configuration.
- * <p>
- * Remarque : le manager se contente de lire les valeurs sans les valider.
+ * Classe permettant de lire et de valider les différents fichiers de configuration.
  *
  * @author Stéphane Marengo
  * @author Loris Marzullo
  */
 public class ConfigurationManager {
     private final static Logger LOG = Logger.getLogger(ConfigurationManager.class.getName());
+
     private static final String DEFAULT_MESSAGE_SEPARATOR = "---";
-    private static final String DEFAULT_PERSON_SEPARATOR = ":";
+    private static final String DEFAULT_TARGET_SEPARATOR = ":";
     private static final String DEFAULT_WITNESS_SEPARATOR = ",";
 
+    private static final int INVALID_VALUE = -1;
+
+    private final String configDirectory;
     @Getter
     private String serverAddress;
     @Getter
@@ -36,53 +37,123 @@ public class ConfigurationManager {
     @Getter
     private int numberOfGroups;
     private String messageSeparator;
-    private String personSeparator;
+    private String targetSeparator;
 
-    private List<String> witnessesAddresses;
-    private List<Person> persons;
+    private List<String> witnessesEmails;
+    private List<Person> targets;
     private List<String> messages;
 
     /**
      * Créé une instance et récupère les différentes informations des fichiers spécifiés.
+     * Affiche des messages en cas d'erreur.
      *
-     * @param configFile   le fichier contenant la configuration
-     * @param messagesFile le fichier contenant les messages
-     * @param personFile   le fichier contenant les victimes
+     * @param configDirectory le chemin vers le dossier de configuration
+     * @param configFile      le fichier contenant la configuration
+     * @param messagesFile    le fichier contenant les messages
+     * @param targetsFile     le fichier contenant les victimes
      * @throws IOException                    si une erreur survient lors des traitements I/O
-     * @throws MissingFormatArgumentException si une propriété obligatoire est manquante dans la configuration
-     * @throws NumberFormatException          si une valeur numérique ne peut pas être convertie
+     * @throws MissingFormatArgumentException si une ou plusieurs valeurs sont incorrectes
      */
-    public ConfigurationManager(@NonNull String configFile, @NonNull String messagesFile, @NonNull String personFile)
-            throws IOException, MissingFormatArgumentException, NumberFormatException {
+    public ConfigurationManager(@NonNull String configDirectory, @NonNull String configFile,
+                                @NonNull String messagesFile, @NonNull String targetsFile)
+            throws IOException, MissingFormatArgumentException {
+        this.configDirectory = configDirectory;
         loadProperties(configFile);
-
         messages = loadMessages(messagesFile);
-        persons = loadPersons(personFile);
+        targets = loadTargets(targetsFile);
+
+        if (!validate())
+            throw new MissingFormatArgumentException("An error occurred. See logs for details.");
     }
 
     /**
-     * Retourne un InputStream sur le fichier de resource passé en paramètre.
+     * Vérifie les divers valeurs lues.
      *
-     * @param fileName le nom du fichier de resource
-     * @return un InputStream sur le fichier
-     * @throws IOException si le fichier ne peut pas être ouvert
+     * @return vrai si les valeurs sont valides, faux autrement
      */
-    private InputStream getResourceAsStream(String fileName) throws IOException {
-        InputStream in = ConfigurationManager.class.getResourceAsStream(parseFileName(fileName));
-        if (in == null)
-            throw new IOException("File " + fileName + " not found.");
+    private boolean validate() {
+        boolean isValid = true;
 
-        return in;
+        if (serverAddress.isEmpty()) {
+            printError("serverAddress", "must be specified");
+            isValid = false;
+        }
+        if (serverPort <= 0) {
+            printError("serverPort", "must be > 0");
+            isValid = false;
+        }
+        if (numberOfGroups <= 0) {
+            printError("numberOfGroups", "must be > 0");
+            isValid = false;
+        }
+        if (witnessesEmails.isEmpty()) {
+            printError("witnessesEmails", "must have at least 1 address");
+            isValid = false;
+        } else {
+            for (String witness : witnessesEmails) {
+                if (!validateEmail("witnessesEmails", witness))
+                    isValid = false;
+            }
+        }
+        if (messages.isEmpty()) {
+            printError("messages", "no messages found");
+            isValid = false;
+        }
+        if (targets.isEmpty()) {
+            printError("targets", "no targets found");
+            isValid = false;
+        } else {
+            for (Person person : targets) {
+                if (!validateEmail("targets", person.getEmail()))
+                    isValid = false;
+            }
+        }
+
+        return isValid;
     }
 
     /**
-     * Ajoute un '/' au nom de fichier passé en paramètre si ce dernier est manquant.
+     * Vérifie que l'email fourni est correct. Affiche un message en cas d'erreur.
+     * Source : https://www.geeksforgeeks.org/check-email-address-valid-not-java/
      *
-     * @param fileName le nom du fichier à traiter
-     * @return le nom du fichier sous la forme /nomFichier
+     * @param field le champ passé à la méthode d'affichage d'erreur
+     * @param email l'adresse à valider
+     * @return vrai si l'email est correct, faux autrement
      */
-    private String parseFileName(String fileName) {
-        return fileName.startsWith("/") ? fileName : "/" + fileName;
+    private boolean validateEmail(@NonNull String field, @NonNull String email) {
+        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+
+        Pattern pat = Pattern.compile(regex);
+
+        if (pat.matcher(email).matches()) {
+            return true;
+        } else {
+            printError(field, email + " is not a valid email.");
+            return false;
+        }
+    }
+
+    /**
+     * Log une erreur avec le format suivant: field: msg
+     *
+     * @param field le nom du champ
+     * @param msg   le message d'erreur
+     */
+    private void printError(String field, String msg) {
+        LOG.info(field + ": " + msg);
+    }
+
+    /**
+     * Retourne le chemin relatif au dossier de configuration du fichier spécifié.
+     *
+     * @param fileName le nom du fichier
+     * @return le chemin relatif au dossier de configuration
+     */
+    private String getPath(String fileName) {
+        return configDirectory + (fileName.startsWith("/") ? fileName : "/" + fileName);
     }
 
     /**
@@ -92,20 +163,24 @@ public class ConfigurationManager {
      * @throws IOException si le fichier ne peut pas être lu
      */
     private void loadProperties(String fileName) throws IOException {
-        try (InputStream in = getResourceAsStream(fileName)) {
-            MandatoryProperties prop = new MandatoryProperties();
-            prop.load(in);
+        try (BufferedReader reader =
+                     new BufferedReader(new FileReader(getPath(fileName), StandardCharsets.UTF_8))) {
+            CustomProperties prop = new CustomProperties();
+            prop.load(reader);
 
-            serverAddress = prop.getMandatoryProperty("serverAddress");
-            serverPort = Integer.parseInt(prop.getMandatoryProperty("serverPort"));
-            numberOfGroups = Integer.parseInt(prop.getMandatoryProperty("numberOfGroups"));
             messageSeparator = prop.getProperty("messageSeparator", DEFAULT_MESSAGE_SEPARATOR);
-            personSeparator = prop.getProperty("personSeparator", DEFAULT_PERSON_SEPARATOR);
-            
+            targetSeparator = prop.getProperty("targetsSeparator", DEFAULT_TARGET_SEPARATOR);
             String witnessSeparator = prop.getProperty("witnessSeparator", DEFAULT_WITNESS_SEPARATOR);
-            String witnesses = prop.getMandatoryProperty("witnessAddresses");
-            witnessesAddresses = new ArrayList<>(Arrays.asList(witnesses.split(witnessSeparator)));
-        } catch (MissingFormatArgumentException | NumberFormatException | IOException e) {
+
+            serverAddress = prop.getProperty("serverAddress", "");
+            serverPort = prop.getInteger("serverPort", INVALID_VALUE);
+            numberOfGroups = prop.getInteger("numberOfGroups", INVALID_VALUE);
+
+            String witnesses = prop.getProperty("witnessesEmails", "");
+            witnessesEmails = new ArrayList<>();
+            if (!witnesses.isEmpty())
+                witnessesEmails.addAll(Arrays.asList(witnesses.split(witnessSeparator)));
+        } catch (IOException e) {
             LOG.log(Level.SEVERE, "Error while parsing configuration file " + fileName + ".", e);
             throw e;
         }
@@ -120,7 +195,7 @@ public class ConfigurationManager {
     private List<String> loadMessages(String fileName) throws IOException {
         List<String> messages = new ArrayList<>();
 
-        try (Scanner scan = new Scanner(getResourceAsStream(fileName), StandardCharsets.UTF_8)) {
+        try (Scanner scan = new Scanner(new FileReader(getPath(fileName), StandardCharsets.UTF_8))) {
             scan.useDelimiter(messageSeparator);
 
             while (scan.hasNext()) {
@@ -139,29 +214,32 @@ public class ConfigurationManager {
      * @param fileName le fichier à lire
      * @throws IOException si le fichier ne peut pas être lu
      */
-    private List<Person> loadPersons(String fileName) throws IOException {
-        List<Person> persons = new LinkedList<>();
+    private List<Person> loadTargets(String fileName) throws IOException {
+        List<Person> targets = new LinkedList<>();
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(getResourceAsStream(fileName),
-                StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(getPath(fileName), StandardCharsets.UTF_8))) {
             for (String line; br.ready() && (line = br.readLine()) != null; ) {
-                String[] person = line.split(personSeparator);
-                persons.add(new Person(person));
+                String[] person = line.split(targetSeparator);
+                if (person.length != 3) {
+                    printError(fileName, line + " has invalid syntax.");
+                } else {
+                    targets.add(new Person(person[0], person[1], person[2]));
+                }
             }
-        } catch (IOException | IllegalArgumentException e) {
-            LOG.log(Level.SEVERE, "Error while parsing persons file " + fileName + ".", e);
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, "Error while parsing targets file " + fileName + ".", e);
             throw e;
         }
-        return persons;
+        return targets;
     }
 
     /**
-     * Retourne une liste non modifiable de personnes.
+     * Retourne une liste non modifiable de cibles.
      *
-     * @return la liste des personnes
+     * @return la liste des cibles
      */
-    public List<Person> getPersons() {
-        return Collections.unmodifiableList(persons);
+    public List<Person> getTargets() {
+        return Collections.unmodifiableList(targets);
     }
 
     /**
@@ -178,7 +256,7 @@ public class ConfigurationManager {
      *
      * @return la liste des messages
      */
-    public List<String> getWitnessesAddresses() {
-        return Collections.unmodifiableList(witnessesAddresses);
+    public List<String> getWitnessesEmails() {
+        return Collections.unmodifiableList(witnessesEmails);
     }
 }
