@@ -60,7 +60,7 @@ La liste des personnes victimes du prank (expéditeurs et destinataires), compor
 Ces différents attributs doivent se trouver sur la même ligne et être séparés par la propriété "personSeparator" définie dans le fichier "config.properties".
 
 Il faut au moins 3 personnes par groupe (nombre défini dans le fichier "config.properties") et par conséquent au minimum 3 personnes.
-A noter qu'une même personne peut apparaître plusieurs fois.
+A noter qu'une même personne peut apparaître plusieurs fois. 
 
 Syntaxe :
 ```
