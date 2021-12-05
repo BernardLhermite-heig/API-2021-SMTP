@@ -4,10 +4,10 @@
 
 ## Description du projet
 
-Ce projet contient une application permettant de faire des pranks sous forme d'email forgés. L'utilisateur peut définir
+Ce projet contient une application permettant de faire des pranks sous forme d'email forgé. L'utilisateur peut définir
 une liste de messages et de personnes victimes desdits pranks, ainsi qu'un nombre de groupes (possibilité de séparer la
 liste des personnes afin de faire plusieurs pranks en une fois). L'application se charge ensuite de générer les emails
-en séparant la liste des personnes en plusieurs groupes et en séléctionnant un message aléatoirement. Les emails sont
+en séparant la liste des personnes en plusieurs groupes et en sélectionnant un message aléatoirement. Les emails sont
 ensuite envoyés automatiquement aux différentes victimes.
 
 ## Configuration d'un serveur mock SMTP
@@ -18,33 +18,31 @@ d'emails ainsi que leur consultation via une interface web.
 
 ### Configuration de Docker
 
-Nous avons rédigé un script [build-image.sh](./docker/build-image.sh) qui permet de compiler MockMock, copier le jar
-généré dans le dossier [docker](./docker) et construire l'image avec le tag ```mockmock```.
+Nous avons rédigé un script [build-image.sh](server/build-image.sh) qui permet de compiler MockMock, copier le jar
+généré dans le dossier [server](./server) et construire l'image avec le tag ```mockmock```.
 
-La recette décrivant l'image se trouve dans le fichier [Dockerfile](./docker/Dockerfile) et utilise comme image de base
-[openjdk](https://hub.docker.com/_/openjdk). Le fichier jar est ensuite copié dans le container. La commande exécutée au
-lancement du container est ```java -jar mockmock.jar```.
+La recette décrivant l'image se trouve dans le fichier [Dockerfile](server/Dockerfile) et utilise comme image de base
+[openjdk 11](https://hub.docker.com/_/openjdk). Le fichier jar est ensuite copié dans le container. La commande exécutée
+au lancement du container est ```java -jar MockMock.jar```.
 
 Les ports 25 et 8282 sont exposés grâce à la commande ```EXPOSE``` ce qui permet d'effectuer un mapping automatique si
 la commande ```docker run``` est exécutée avec le flag ```-P```.
 
 ### Utilisation
 
-1. Construire l'image en lançant le script [build-image.sh](./docker/build-image.sh)
-2. Lancer le container ```docker run -it -p <port1>:25 -p <port2>:8282 mockmock```, où <portX> correspond aux ports de
-   la machine devant être remappés
-
-- Il est aussi possible de l'exécuter avec ```docker run -it -P mockmock``` afin d'avoir des ports aléatoires puis de
-  récupérer lesdits ports mappés avec ```docker ps```
-
+1. Construire l'image en lançant le script [build-image.sh](server/build-image.sh)
+2. Lancer le container avec ```docker run -it -p <port1>:25 -p <port2>:8282 mockmock```, où ```<portX>``` 
+   correspond aux ports de la machine devant être remappés
+   - Il est aussi possible de l'exécuter avec ```docker run -it -P mockmock``` afin d'avoir des ports aléatoires puis de
+     récupérer lesdits ports mappés avec ```docker ps```
 3. Vérifier son fonctionnement en accédant à l'interface web à l'adresse ```localhost:<port2>```
-4. Des mails peuvent désormais être envoyés à l'adresse localhost sur le port <port1>
+4. Des mails peuvent désormais être envoyés à l'adresse localhost sur le port ```<port1>```
 
 ## Instructions pour envoyer des pranks
 
 Afin de générer les pranks il faut modifier plusieurs fichiers :
 
-### Fichier config.properties
+### Fichier [config.properties](client/config/config.properties)
 
 Ce fichier permet de configurer l'envoi des emails ainsi que la syntaxe pour lire les autres fichiers.
 
@@ -74,7 +72,7 @@ Syntaxe :
 [...]
 ```
 
-### Fichier messages.txt
+### Fichier [messages.txt](client/config/messages.txt)
 
 La liste des messages qui peuvent être envoyés. Ceux-ci doivent être séparés par la propriété ```messageSeparator```
 définie dans le fichier ```config.propreties```
@@ -93,16 +91,16 @@ Syntaxe (en utilisant ```---``` comme séparateur) :
 [...]
 ```
 
-### Fichier targets.txt
+### Fichier [targets.txt](client/config/targets.txt)
 
 La liste des personnes victimes du ou des prank(s) (expéditeurs et destinataires), comportant leur nom, prénom et
 adresse mail. Ces différents attributs doivent se trouver sur la même ligne et être séparés par la
 propriété ```targetSeparator``` définie dans le fichier ```config.properties```.
 
 Il faut au moins 3 personnes par groupe (nombre de groupes défini dans le fichier ```config.properties```) et par
-conséquent au minimum 3 personnes. A noter qu'une même personne peut apparaître dans le fichier plusieurs fois.
+conséquent au minimum 3 personnes. À noter qu'une même personne peut apparaître dans le fichier plusieurs fois.
 
-Syntaxe (en utilisant ```:``` comme séparateur):
+Syntaxe (en utilisant ```:``` comme séparateur) :
 
 ```
 <nom1>:<prenom1>:<adresseEmail1>
@@ -148,7 +146,7 @@ groupes voulus, n'est pas entier, le dernier groupe sera composé des personnes 
 #### SmtpClient
 
 Cette classe est responsable de la communication avec le serveur SMTP et également de logger les différents échanges.
-L'implémentation est conforme à la norme [RFC 5321](https://datatracker.ietf.org/doc/html/rfc5321). Si une erreur
+L'implémentation est basée sur la [RFC 5321](https://datatracker.ietf.org/doc/html/rfc5321). Si une erreur
 survient lors de l'envoi d'un email, la communication est interrompue et une exception est levée.
 
 #### AppStarter
