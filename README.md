@@ -104,17 +104,19 @@ Une fois ces 3 fichiers édités correctement, il suffit de lancer le programme.
 
 ### Description des classes
 
-![Diagramme de classes](./figures/UML.png "Diagramme de classes")
+![Diagramme de classes](./figures/uml.png "Diagramme de classes")
+
+Le diagramme ne comprend que les méthodes publiques des différentes classes pour simplifier sa lecture.
 
 #### ConfigurationManager
 
-Cette classe est responsable de lire et de valider les différents fichiers de configuration.
-Les autres classes peuvent ensuite utiliser une instance de cette classe pour récupérer les différentes informations.
-Après avoir récupéré toutes les informations ces dernières sont validées et chaque propriété incorrecte génère un message,
-puis une exception est levée.
+Cette classe est responsable de lire et de valider les différents fichiers de configuration. Les autres classes peuvent
+ensuite utiliser une instance de cette classe pour récupérer les différentes informations. Après avoir récupéré toutes
+les informations ces dernières sont validées et chaque propriété incorrecte génère un message, puis une exception est
+levée.
 
-Lors de la lecture du fichier ```targets.txt```, la syntaxe attendue doit respecter celle définie plus haut.
-Si tel n'est pas le cas, un message est affiché indiquant quelle ligne est incorrecte et cette dernière est ignorée.
+Lors de la lecture du fichier ```targets.txt```, la syntaxe attendue doit respecter celle définie plus haut. Si tel
+n'est pas le cas, un message est affiché indiquant quelle ligne est incorrecte et cette dernière est ignorée.
 
 #### Prank
 

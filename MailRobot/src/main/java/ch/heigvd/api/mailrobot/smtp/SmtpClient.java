@@ -93,8 +93,7 @@ public class SmtpClient {
             addTo(recipients);
             addBody(mail.getBody());
 
-            if (!sendContent()
-                    || !sendQuit()) {
+            if (!sendContent()) {
                 return false;
             }
         } catch (IOException e) {
@@ -102,14 +101,20 @@ public class SmtpClient {
             return false;
         } finally {
             try {
+                if (!socket.isClosed() && !sendQuit())
+                    LOG.log(Level.SEVERE, "Server did not accept QUIT command.");
+            } catch (IOException e) {
+                LOG.log(Level.SEVERE, "Error while sending QUIT command.", e);
+            }
+            try {
                 in.close();
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error while closing reader.", e);
+                LOG.log(Level.SEVERE, "Error while closing input.", e);
             }
             try {
                 out.close();
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error while closing writer.", e);
+                LOG.log(Level.SEVERE, "Error while closing output.", e);
             }
             try {
                 socket.close();

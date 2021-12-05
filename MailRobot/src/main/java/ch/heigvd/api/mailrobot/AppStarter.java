@@ -54,7 +54,7 @@ public class AppStarter {
             for (Prank prank : pranks) {
                 Message message = new Message(prank.getExpeditor(), "Subject", prank.getMessage());
                 message.addRecipients(prank.getRecipients());
-                message.addHiddenRecipients(witnesses);
+                message.addWitnesses(witnesses);
 
                 if (!client.send(message, DOMAIN)) {
                     System.out.println("Something went wrong.");

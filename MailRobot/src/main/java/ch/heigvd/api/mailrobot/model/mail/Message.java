@@ -62,16 +62,16 @@ public class Message {
     *
     * @param email l'adresse du destinataire caché à ajouter
     */
-   public void addHiddenRecipient(@NonNull String email) {
+   public void addWitness(@NonNull String email) {
       witnesses.add(email);
    }
-   
+
    /**
     * Ajoute la liste d'adresses email passée en paramètre dans la liste des destinataires.
     *
     * @param emails la liste d'adresses à ajouter
     */
-   public void addHiddenRecipients(List<String> emails) {
+   public void addWitnesses(List<String> emails) {
       witnesses.addAll(emails);
    }
 
