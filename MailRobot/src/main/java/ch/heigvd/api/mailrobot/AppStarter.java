@@ -52,7 +52,7 @@ public class AppStarter {
             SmtpClient client = new SmtpClient(config.getServerAddress(), config.getServerPort());
             List<String> witnesses = config.getWitnessesEmails();
             for (Prank prank : pranks) {
-                Message message = new Message(prank.getExpeditor(), "Subject", prank.getMessage());
+                Message message = new Message(prank.getExpeditor(), prank.getSubject(), prank.getBody());
                 message.addRecipients(prank.getRecipients());
                 message.addWitnesses(witnesses);
 

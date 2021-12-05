@@ -70,13 +70,13 @@ Ceux-ci doivent être séparés par la propriété ```messageSeparator``` défin
 
 Syntaxe (en utilisant ```---``` comme séparateur) :
 ```
-Subject: <sujet1>
+<sujet1>
 <message1>
 ---
-Subject: <sujet2>
+<sujet2>
 <message2>
 ---
-Subject: <sujet3>
+<sujet3>
 <message3>
 [...]
 ```

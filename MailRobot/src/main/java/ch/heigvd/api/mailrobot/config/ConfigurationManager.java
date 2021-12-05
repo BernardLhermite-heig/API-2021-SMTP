@@ -196,8 +196,7 @@ public class ConfigurationManager {
         List<String> messages = new ArrayList<>();
 
         try (Scanner scan = new Scanner(new FileReader(getPath(fileName), StandardCharsets.UTF_8))) {
-            scan.useDelimiter(messageSeparator);
-
+            scan.useDelimiter(messageSeparator + System.lineSeparator());
             while (scan.hasNext()) {
                 messages.add(scan.next());
             }

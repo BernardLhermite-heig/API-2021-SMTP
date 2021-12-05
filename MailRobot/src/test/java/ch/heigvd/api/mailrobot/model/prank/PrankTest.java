@@ -14,4 +14,9 @@ class PrankTest {
     void itShouldThrowWhenGroupIsTooSmall() {
         assertThrows(IllegalArgumentException.class, () -> new Prank(new Group(), "message"));
     }
+
+    @Test
+    void itShouldThrowWhenMessageHasIncorrectFormat() {
+        assertThrows(IllegalArgumentException.class, () -> new Prank(new Group(), ""));
+    }
 }
