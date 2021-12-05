@@ -169,7 +169,7 @@ public class ConfigurationManager {
             prop.load(reader);
 
             messageSeparator = prop.getProperty("messageSeparator", DEFAULT_MESSAGE_SEPARATOR);
-            targetSeparator = prop.getProperty("targetsSeparator", DEFAULT_TARGET_SEPARATOR);
+            targetSeparator = prop.getProperty("targetSeparator", DEFAULT_TARGET_SEPARATOR);
             String witnessSeparator = prop.getProperty("witnessSeparator", DEFAULT_WITNESS_SEPARATOR);
 
             serverAddress = prop.getProperty("serverAddress", "");
