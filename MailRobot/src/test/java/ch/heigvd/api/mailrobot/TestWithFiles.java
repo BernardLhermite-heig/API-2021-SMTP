@@ -14,6 +14,14 @@ import java.util.Comparator;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+
+/**
+ * Classe abstraite permettant de copier les fichiers de resources entre chaque test.
+ * Fournit également une méthode permettant d'éditer le fichier de configuration.
+ *
+ * @author Stéphane Marengo
+ * @author Loris Marzullo
+ */
 public abstract class TestWithFiles {
     protected static final String CONFIG_DIR = "./testsConfig";
     protected static final Path CONFIG_PATH = Paths.get(CONFIG_DIR);
@@ -21,14 +29,15 @@ public abstract class TestWithFiles {
     protected static final String CONFIG_FILE = "config.properties";
     protected static final String MESSAGES_FILE = "messages.txt";
     protected static final String TARGETS_FILE = "targets.txt";
-    protected static final String INVALID_TARGETS_FILE = "invalidTargets.txt";
+    protected static final String TARGETS_INVALID_FILE = "targets.invalid.txt";
+    protected static final String TARGETS_SMALL_FILE = "targets.small.txt";
     protected static final String EMPTY_FILE = "empty.txt";
     protected static final String UNKNOWN_FILE = "unknown.txt";
 
-    protected static final String[] FILES = {CONFIG_FILE, MESSAGES_FILE, TARGETS_FILE, INVALID_TARGETS_FILE,
-            EMPTY_FILE};
+    protected static final String[] FILES = {CONFIG_FILE, MESSAGES_FILE, TARGETS_FILE,
+            TARGETS_INVALID_FILE, TARGETS_SMALL_FILE, EMPTY_FILE};
 
-    protected static void copyFile(String file) throws IOException {
+    private static void copyFile(String file) throws IOException {
         Path filePath = CONFIG_PATH.resolve(file);
 
         InputStream in = TestWithFiles.class.getResourceAsStream("/" + file);
@@ -63,7 +72,7 @@ public abstract class TestWithFiles {
     }
 
     @BeforeEach
-    void copyConfigFile() throws IOException {
+    private void copyConfigFile() throws IOException {
         copyFile(CONFIG_FILE);
     }
 

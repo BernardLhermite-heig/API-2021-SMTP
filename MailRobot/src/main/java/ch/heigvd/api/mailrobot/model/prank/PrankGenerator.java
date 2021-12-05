@@ -17,7 +17,7 @@ public class PrankGenerator {
    private final static Random RANDOM = new Random();
 
    private ConfigurationManager config;
-   private List<Person> persons;
+   private List<Person> targets;
    private List<String> messages;
 
    /**
@@ -33,19 +33,18 @@ public class PrankGenerator {
       this.config = config;
 
       // Créé une copie pour pouvoir la mélanger
-      persons = new LinkedList<>(config.getTargets());
+      targets = new LinkedList<>(config.getTargets());
 
       int nbGroups = config.getNumberOfGroups();
       if (nbGroups <= 0)
-         throw new IllegalArgumentException("Le nombre de groupe doit être strictement positif.");
+         throw new IllegalArgumentException("Number of group must be > 0.");
 
-      int nbPersons = persons.size();
-      if (nbPersons < MIN_GROUP_SIZE)
-         throw new IllegalArgumentException("Le nombre de personnes (" + nbPersons + ") n'est pas suffisant. Il faut " +
-                 "au minimum " + nbPersons * nbGroups + " personnes.");
+      int targetsCount = targets.size();
+      if (targetsCount < MIN_GROUP_SIZE)
+         throw new IllegalArgumentException("Not enough targets (" + targetsCount + "). Minimum required: " + targetsCount * nbGroups + ".");
 
       messages = config.getMessages();
-      Collections.shuffle(persons);
+      Collections.shuffle(targets);
    }
 
    /**
@@ -54,11 +53,11 @@ public class PrankGenerator {
     * @return la liste des pranks
     */
    public List<Prank> generatePranks() {
-      int nbPersons = persons.size();
+      int nbPersons = targets.size();
       int nbGroups = config.getNumberOfGroups();
       int groupSize = nbPersons / nbGroups;
 
-      List<Prank> pranks = new ArrayList<>();
+      List<Prank> pranks = new LinkedList<>();
 
       // Crée un prank pour chaque groupe
       List<Group> groups = generateGroups(nbGroups, groupSize);
@@ -79,7 +78,7 @@ public class PrankGenerator {
    private List<Group> generateGroups(int nbGroups, int groupSize) {
       List<Group> groups = new LinkedList<>();
 
-      Iterator<Person> it = persons.iterator();
+      Iterator<Person> it = targets.iterator();
       for (int i = 0; i < nbGroups; i++) {
          Group group = new Group();
 

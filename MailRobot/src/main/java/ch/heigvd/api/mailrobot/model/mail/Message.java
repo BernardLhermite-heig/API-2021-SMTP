@@ -49,6 +49,15 @@ public class Message {
    }
 
    /**
+    * Ajoute la liste de personnes passée en paramètre dans la liste des destinataires.
+    *
+    * @param persons la liste des destinataires à ajouter
+    */
+   public void addRecipients(@NonNull List<Person> persons) {
+      recipients.addAll(persons);
+   }
+
+   /**
     * Ajoute la personne passée en paramètre dans la liste des destinataires cachés.
     *
     * @param person le destinataire caché à ajouter

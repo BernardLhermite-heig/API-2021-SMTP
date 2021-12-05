@@ -36,8 +36,8 @@ public class Prank {
       List<Person> victims = group.getPersons();
 
       if (victims.size() < MINIMUM_GROUP_SIZE)
-         throw new IllegalArgumentException("Le groupe doit être composé au minimum de " + MINIMUM_GROUP_SIZE +
-                 " personnes");
+         throw new IllegalArgumentException("Group must have at least " + MINIMUM_GROUP_SIZE +
+                 " persons");
 
       expeditor = victims.get(0);
       recipients = victims.subList(1, victims.size());

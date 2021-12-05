@@ -110,7 +110,7 @@ class ConfigurationManagerTest extends TestWithFiles {
                 () -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, EMPTY_FILE));
 
         assertThrows(MissingFormatArgumentException.class,
-                () -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, INVALID_TARGETS_FILE));
+                () -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, TARGETS_INVALID_FILE));
     }
 
 }
