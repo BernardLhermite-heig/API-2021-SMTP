@@ -1,7 +1,11 @@
+Subject: Sujet1
 Message1
 ---
+Subject: Sujet2
 Message2
 ---
+Subject: Sujet3
 Message3
 ---
+Subject: Sujet4
 Message4
