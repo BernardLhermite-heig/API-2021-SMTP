@@ -16,6 +16,7 @@ class ConfigurationManagerTest extends TestWithFiles {
     private static final String ADDRESS = "localhost";
     private static final int PORT = 25;
     private static final int NB_GROUPS = 2;
+    private static final String DOMAIN = "prank";
     private static final String[] WITNESS_ADDRESSES = {"witness.address@heig-vd.ch", "witness2.address@heig-vd.ch"};
     private static final int MESSAGES_COUNT = 4;
     private static final int TARGETS_COUNT = 9;
@@ -27,6 +28,7 @@ class ConfigurationManagerTest extends TestWithFiles {
         assertEquals(ADDRESS, manager.getServerAddress());
         assertEquals(PORT, manager.getServerPort());
         assertEquals(NB_GROUPS, manager.getNumberOfGroups());
+        assertEquals(DOMAIN, manager.getDomain());
         assertArrayEquals(WITNESS_ADDRESSES, manager.getWitnessesEmails().toArray());
         assertEquals(MESSAGES_COUNT, manager.getMessages().size());
         assertEquals(TARGETS_COUNT, manager.getTargets().size());

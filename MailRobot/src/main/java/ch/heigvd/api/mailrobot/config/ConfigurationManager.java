@@ -26,6 +26,7 @@ public class ConfigurationManager {
     private static final String DEFAULT_MESSAGE_SEPARATOR = "---";
     private static final String DEFAULT_TARGET_SEPARATOR = ":";
     private static final String DEFAULT_WITNESS_SEPARATOR = ",";
+    private static final String DEFAULT_DOMAIN = "prank";
 
     private static final int INVALID_VALUE = -1;
 
@@ -36,6 +37,8 @@ public class ConfigurationManager {
     private int serverPort;
     @Getter
     private int numberOfGroups;
+    @Getter
+    private String domain;
     private String messageSeparator;
     private String targetSeparator;
 
@@ -175,6 +178,7 @@ public class ConfigurationManager {
             serverAddress = prop.getProperty("serverAddress", "");
             serverPort = prop.getInteger("serverPort", INVALID_VALUE);
             numberOfGroups = prop.getInteger("numberOfGroups", INVALID_VALUE);
+            domain = prop.getProperty("domain", DEFAULT_DOMAIN);
 
             String witnesses = prop.getProperty("witnessesEmails", "");
             witnessesEmails = new ArrayList<>();

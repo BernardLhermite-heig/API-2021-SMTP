@@ -22,8 +22,6 @@ public class AppStarter {
     private static final String MESSAGE_FILE = "messages.txt";
     private static final String TARGET_FILE = "targets.txt";
 
-    private static final String DOMAIN = "prank";
-
     private static final String[] DEFAULT_CONFIG_FILES = {
             "messages.default.txt",
             "targets.default.txt",
@@ -51,12 +49,14 @@ public class AppStarter {
 
             SmtpClient client = new SmtpClient(config.getServerAddress(), config.getServerPort());
             List<String> witnesses = config.getWitnessesEmails();
+            String domain = config.getDomain();
+            
             for (Prank prank : pranks) {
                 Message message = new Message(prank.getExpeditor(), prank.getSubject(), prank.getBody());
                 message.addRecipients(prank.getRecipients());
                 message.addWitnesses(witnesses);
 
-                if (!client.send(message, DOMAIN)) {
+                if (!client.send(message, domain)) {
                     System.out.println("Something went wrong.");
                 }
             }

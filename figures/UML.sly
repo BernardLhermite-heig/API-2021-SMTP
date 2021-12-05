@@ -130,6 +130,7 @@
       <method isAbstract="false" isStatic="false" name="getServerAddress" returnType="String" view="DEFAULT" visibility="PUBLIC"/>
       <method isAbstract="false" isStatic="false" name="getServerPort" returnType="int" view="DEFAULT" visibility="PUBLIC"/>
       <method isAbstract="false" isStatic="false" name="getNumberOfGroups" returnType="int" view="DEFAULT" visibility="PUBLIC"/>
+      <method isAbstract="false" isStatic="false" name="getDomain" returnType="String" view="DEFAULT" visibility="PUBLIC"/>
     </entity>
     <entity entityType="CLASS" id="18906" isAbstract="false" name="Group" visibility="PUBLIC">
       <method is-constructor="true" isAbstract="false" isStatic="false" name="Group" returnType="" view="DEFAULT" visibility="PUBLIC"/>
@@ -180,7 +181,8 @@
       </method>
       <method isAbstract="false" isStatic="false" name="getRecipients" returnType="List&lt;Person&gt;" view="DEFAULT" visibility="PUBLIC"/>
       <method isAbstract="false" isStatic="false" name="getExpeditor" returnType="Person" view="DEFAULT" visibility="PUBLIC"/>
-      <method isAbstract="false" isStatic="false" name="getMessage" returnType="String" view="DEFAULT" visibility="PUBLIC"/>
+      <method isAbstract="false" isStatic="false" name="getSubject" returnType="String" view="DEFAULT" visibility="PUBLIC"/>
+      <method isAbstract="false" isStatic="false" name="getBody" returnType="String" view="DEFAULT" visibility="PUBLIC"/>
     </entity>
     <entity entityType="CLASS" id="18910" isAbstract="false" name="PrankGenerator" visibility="PUBLIC">
       <method is-constructor="true" isAbstract="false" isStatic="false" name="PrankGenerator" returnType="" view="DEFAULT" visibility="PUBLIC">
@@ -583,7 +585,7 @@
         <x>60</x>
         <y>260</y>
         <w>250</w>
-        <h>115</h>
+        <h>130</h>
       </geometry>
     </componentView>
     <componentView color="-2079" componentID="18908" displayAttributes="true" displayDefault="true" displayMethods="true">
@@ -615,7 +617,7 @@
         <x>60</x>
         <y>530</y>
         <w>620</w>
-        <h>160</h>
+        <h>175</h>
       </geometry>
     </componentView>
   </umlView>
