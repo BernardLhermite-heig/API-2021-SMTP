@@ -17,7 +17,7 @@ public class Message {
    @Getter
    private Person from;
    private List<Person> recipients;
-   private List<Person> hiddenRecipients;
+   private List<String> witnesses;
    @Getter
    private String subject;
    @Getter
@@ -36,7 +36,7 @@ public class Message {
       this.body = body;
 
       recipients = new LinkedList<>();
-      hiddenRecipients = new LinkedList<>();
+      witnesses = new LinkedList<>();
    }
 
    /**
@@ -58,12 +58,21 @@ public class Message {
    }
 
    /**
-    * Ajoute la personne passée en paramètre dans la liste des destinataires cachés.
+    * Ajoute l'email passé en paramètre dans la liste des destinataires cachés.
     *
-    * @param person le destinataire caché à ajouter
+    * @param email l'adresse du destinataire caché à ajouter
     */
-   public void addHiddenRecipient(@NonNull Person person) {
-      hiddenRecipients.add(person);
+   public void addHiddenRecipient(@NonNull String email) {
+      witnesses.add(email);
+   }
+   
+   /**
+    * Ajoute la liste d'adresses email passée en paramètre dans la liste des destinataires.
+    *
+    * @param emails la liste d'adresses à ajouter
+    */
+   public void addHiddenRecipients(List<String> emails) {
+      witnesses.addAll(emails);
    }
 
    /**
@@ -76,11 +85,11 @@ public class Message {
    }
 
    /**
-    * Retourne une liste non modifiable des destinataires cachés.
+    * Retourne une liste non modifiable d'adresses des destinataires cachés.
     *
-    * @return la liste des destinataires cachés
+    * @return la liste d'adresses des destinataires cachés
     */
-   public List<Person> getHiddenRecipients() {
-      return Collections.unmodifiableList(hiddenRecipients);
+   public List<String> getWitnesses() {
+      return Collections.unmodifiableList(witnesses);
    }
 }

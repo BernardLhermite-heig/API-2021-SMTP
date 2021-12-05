@@ -64,7 +64,7 @@ public class SmtpClient {
      */
     public boolean send(@NonNull Message mail, @NonNull String domain) throws IllegalArgumentException {
         List<Person> recipients = mail.getRecipients();
-        List<Person> hiddenRecipients = mail.getHiddenRecipients();
+        List<String> hiddenRecipients = mail.getWitnesses();
         Person from = mail.getFrom();
 
         if (recipients.isEmpty()) {
@@ -81,7 +81,7 @@ public class SmtpClient {
                     || !sendHello(domain)
                     || !sendMailFrom(from.getEmail())
                     || !sendMailTo(recipients)
-                    || !sendMailTo(hiddenRecipients)
+                    || !sendMailToFromEmails(hiddenRecipients)
                     || !sendData()) {
                 return false;
             }
@@ -209,9 +209,26 @@ public class SmtpClient {
      * @return vrai si le serveur a accepté la commande, faux sinon
      * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private boolean sendMailTo(@NonNull List<Person> recipients) throws IOException {
+    private boolean sendMailTo(List<Person> recipients) throws IOException {
         for (Person p : recipients) {
             if (!sendAndRead("RCPT TO:<" + p.getEmail() + ">", CODE_OK)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * Envoi une commande MAIL TO avec chaque adresse présente dans la liste fournie.
+     *
+     * @param emails la liste d'adresses des destinataires
+     * @return vrai si le serveur a accepté la commande, faux sinon
+     * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
+     */
+    private boolean sendMailToFromEmails(List<String> emails) throws IOException {
+        for (String email : emails) {
+            if (!sendAndRead("RCPT TO:<" + email + ">", CODE_OK)) {
                 return false;
             }
         }

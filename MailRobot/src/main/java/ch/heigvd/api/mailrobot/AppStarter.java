@@ -50,9 +50,11 @@ public class AppStarter {
             List<Prank> pranks = generator.generatePranks();
 
             SmtpClient client = new SmtpClient(config.getServerAddress(), config.getServerPort());
+            List<String> witnesses = config.getWitnessesEmails();
             for (Prank prank : pranks) {
                 Message message = new Message(prank.getExpeditor(), "Subject", prank.getMessage());
                 message.addRecipients(prank.getRecipients());
+                message.addHiddenRecipients(witnesses);
 
                 if (!client.send(message, DOMAIN)) {
                     System.out.println("Something went wrong.");
