@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 public class ConfigurationManager {
     private final static Logger LOG = Logger.getLogger(ConfigurationManager.class.getName());
 
+    private static final String EOL = "\r\n";
     private static final String DEFAULT_MESSAGE_SEPARATOR = "---";
     private static final String DEFAULT_TARGET_SEPARATOR = ":";
     private static final String DEFAULT_WITNESS_SEPARATOR = ",";
@@ -199,15 +200,25 @@ public class ConfigurationManager {
     private List<String> loadMessages(String fileName) throws IOException {
         List<String> messages = new ArrayList<>();
 
-        try (Scanner scan = new Scanner(new FileReader(getPath(fileName), StandardCharsets.UTF_8))) {
-            scan.useDelimiter(messageSeparator + System.lineSeparator());
-            while (scan.hasNext()) {
-                messages.add(scan.next());
+        try (BufferedReader br = new BufferedReader(new FileReader(getPath(fileName), StandardCharsets.UTF_8))) {
+            StringBuilder builder = new StringBuilder();
+            for (String line; br.ready() && (line = br.readLine()) != null; ) {
+                if (line.startsWith(messageSeparator)) {
+                    messages.add(builder.toString());
+                    builder.setLength(0);
+                    continue;
+                }
+                builder.append(line).append(System.lineSeparator());
+            }
+
+            if (builder.length() > 0) {
+                messages.add(builder.toString());
             }
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Error while parsing messages file " + fileName + ".", e);
             throw e;
         }
+
         return messages;
     }
 
