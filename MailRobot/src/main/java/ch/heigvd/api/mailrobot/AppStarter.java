@@ -31,15 +31,23 @@ public class AppStarter {
     public static void main(String[] args) {
         // Log output on a single line
         System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %5$s%6$s%n");
+        // Only log SEVERE
+        Logger.getLogger("").setLevel(Level.SEVERE);
 
-        if (args.length > 0 && args[0].equals("-c")) {
-            try {
-                createDefaultConfig();
-                System.out.println("Default configuration created.");
-            } catch (IOException e) {
-                System.out.println("Could not create default configuration.");
+        for (String arg : args) {
+            switch (arg) {
+                case "-c":
+                    try {
+                        createDefaultConfig();
+                        System.out.println("Default configuration created.");
+                    } catch (IOException e) {
+                        System.out.println("Could not create default configuration.");
+                    }
+                    return;
+                case "-l":
+                    Logger.getLogger("").setLevel(Level.ALL);
+                    break;
             }
-            return;
         }
 
         try {
@@ -47,19 +55,21 @@ public class AppStarter {
             PrankGenerator generator = new PrankGenerator(config);
             List<Prank> pranks = generator.generatePranks();
 
-            SmtpClient client = new SmtpClient(config.getServerAddress(), config.getServerPort());
+            SmtpClient client = new SmtpClient(config.getServerAddress(), config.getServerPort(), config.getDomain());
             List<String> witnesses = config.getWitnessesEmails();
-            String domain = config.getDomain();
-            
+
             for (Prank prank : pranks) {
                 Message message = new Message(prank.getExpeditor(), prank.getSubject(), prank.getBody());
                 message.addRecipients(prank.getRecipients());
                 message.addWitnesses(witnesses);
 
-                if (!client.send(message, domain)) {
+                System.out.println("Sending prank...");
+
+                if (!client.send(message)) {
                     System.out.println("Something went wrong.");
                 }
             }
+            System.out.println("Done sending pranks !");
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "An error occurred.", e);
         }
