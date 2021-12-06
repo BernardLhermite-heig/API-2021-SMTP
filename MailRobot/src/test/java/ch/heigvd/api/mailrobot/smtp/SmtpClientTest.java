@@ -17,15 +17,15 @@ class SmtpClientTest {
 
     @Test
     public void itShouldThrowOnInvalidPort() {
-        assertThrows(IllegalArgumentException.class, () -> new SmtpClient(HOST, -25));
-        assertThrows(IllegalArgumentException.class, () -> new SmtpClient(HOST, 0));
+        assertThrows(IllegalArgumentException.class, () -> new SmtpClient(HOST, -25, DOMAIN));
+        assertThrows(IllegalArgumentException.class, () -> new SmtpClient(HOST, 0, DOMAIN));
     }
 
     @Test
     public void itShouldThrowOnMissingRecipients() {
         Person person = new Person("firstname", "lastname", "email");
         Message m = new Message(person, "Subject", "Body");
-        SmtpClient client = new SmtpClient(HOST, PORT);
-        assertThrows(IllegalArgumentException.class, () -> client.send(m, DOMAIN));
+        SmtpClient client = new SmtpClient(HOST, PORT, DOMAIN);
+        assertThrows(IllegalArgumentException.class, () -> client.send(m));
     }
 }

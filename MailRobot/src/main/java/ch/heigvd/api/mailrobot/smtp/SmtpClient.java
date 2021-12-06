@@ -33,36 +33,36 @@ public class SmtpClient {
 
     private final String HOST;
     private final int PORT;
+    private final String DOMAIN;
     private BufferedWriter out;
     private BufferedReader in;
     private Socket socket;
 
-    private StringBuilder content;
-
     /**
      * Construit un client qui utilisera l'hôte et le port fourni.
      *
-     * @param host l'adresse du serveur SMTP
-     * @param port le port à utiliser
+     * @param host   l'adresse du serveur SMTP
+     * @param port   le port à utiliser
+     * @param domain le domaine utilisé avec la commande EHLO
      * @throws IllegalArgumentException si le port n'est pas strictement positif
      */
-    public SmtpClient(@NonNull String host, int port) throws IllegalArgumentException {
+    public SmtpClient(@NonNull String host, int port, @NonNull String domain) throws IllegalArgumentException {
         if (port <= 0)
             throw new IllegalArgumentException("Invalid port provided.");
 
         this.HOST = host;
         this.PORT = port;
+        this.DOMAIN = domain;
     }
 
     /**
-     * Envoie au serveur le message passé en paramètre en utilisant le domaine fourni.
+     * Envoie au serveur le message passé en paramètre.
      *
-     * @param mail   le message à envoyer
-     * @param domain le domaine utilisé lors de la commande EHLO
+     * @param mail le message à envoyer
      * @return vrai si l'envoi s'est déroulé correctement, faux sinon
      * @throws IllegalArgumentException s'il n'y a pas de destinataire ou d'expéditeur
      */
-    public boolean send(@NonNull Message mail, @NonNull String domain) throws IllegalArgumentException {
+    public boolean send(@NonNull Message mail) throws IllegalArgumentException {
         List<Person> recipients = mail.getRecipients();
         List<String> hiddenRecipients = mail.getWitnesses();
         Person from = mail.getFrom();
@@ -75,27 +75,24 @@ public class SmtpClient {
             socket = new Socket(HOST, PORT);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
             out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
-            content = new StringBuilder("Content-Type: text/plain; charset=utf-8");
 
             if (!read(CODE_READY)
-                    || !sendHello(domain)
+                    || !sendHello(DOMAIN)
                     || !sendMailFrom(from.getEmail())
-                    || !sendMailTo(recipients)
-                    || !sendMailToFromEmails(hiddenRecipients)
+                    || !sendRcptTo(recipients, hiddenRecipients)
                     || !sendData()) {
                 return false;
             }
 
-            // Préparation du contenu
-            addDate();
-            addFrom(from);
-            addSubject(mail.getSubject());
-            addTo(recipients);
-            addBody(mail.getBody());
+            // Envoi du contenu
+            send("Content-Type: text/plain; charset=UTF-8");
+            sendDate();
+            sendFrom(from);
+            sendTo(recipients);
+            sendSubject(mail.getSubject());
+            sendBody(mail.getBody());
 
-            if (!sendContent()) {
-                return false;
-            }
+            return read(CODE_OK);
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Error while trying to send mail.", e);
             return false;
@@ -122,7 +119,6 @@ public class SmtpClient {
                 LOG.log(Level.SEVERE, "Error while closing socket.", e);
             }
         }
-        return true;
     }
 
     /**
@@ -208,36 +204,36 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi une commande MAIL TO avec l'adresse de chaque personne présente dans la liste fournie.
+     * Envoi une commande RCPT TO pour chaque adresse passée en paramètre de chacune des listes.
      *
-     * @param recipients la liste des destinataires
+     * @param recipients la liste des personnes destinataires
+     * @param emails     la liste des adresses
      * @return vrai si le serveur a accepté la commande, faux sinon
      * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private boolean sendMailTo(List<Person> recipients) throws IOException {
+    private boolean sendRcptTo(List<Person> recipients, List<String> emails) throws IOException {
         for (Person p : recipients) {
-            if (!sendAndRead("RCPT TO:<" + p.getEmail() + ">", CODE_OK)) {
+            if (!sendRcptTo(p.getEmail())) {
+                return false;
+            }
+        }
+        for (String email : emails) {
+            if (!sendRcptTo(email)) {
                 return false;
             }
         }
         return true;
     }
 
-
     /**
-     * Envoi une commande MAIL TO avec chaque adresse présente dans la liste fournie.
+     * Envoi une commande RCPT TO avec l'adresse passée en paramètre.
      *
-     * @param emails la liste d'adresses des destinataires
+     * @param email l'adresse à envoyer
      * @return vrai si le serveur a accepté la commande, faux sinon
      * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private boolean sendMailToFromEmails(List<String> emails) throws IOException {
-        for (String email : emails) {
-            if (!sendAndRead("RCPT TO:<" + email + ">", CODE_OK)) {
-                return false;
-            }
-        }
-        return true;
+    private boolean sendRcptTo(String email) throws IOException {
+        return sendAndRead("RCPT TO:<" + email + ">", CODE_OK);
     }
 
     /**
@@ -252,70 +248,62 @@ public class SmtpClient {
 
     /**
      * Ajoute la date courante au contenu du mail.
+     *
+     * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private void addDate() {
+    private void sendDate() throws IOException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
         String formattedDate = ZonedDateTime.now().format(formatter);
-        content.append(formattedDate).append(EOL);
+        send("Date: " + formattedDate);
     }
 
     /**
      * Ajoute l'expéditeur passé en paramètre au contenu du mail.
      *
      * @param person l'expéditeur
+     * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private void addFrom(@NonNull Person person) {
-        content.append("From: ").append(person).append(EOL);
+    private void sendFrom(@NonNull Person person) throws IOException {
+        send("From: " + person);
     }
 
     /**
-     * Ajoute les destinataires fournies au contenu du mail.
+     * Envoie les destinataires passés en paramètre.
      *
      * @param recipients la liste des destinataires
+     * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private void addTo(@NonNull List<Person> recipients) {
-        content.append("To: ");
+    private void sendTo(@NonNull List<Person> recipients) throws IOException {
+        StringBuilder builder = new StringBuilder("To: ");
         String prefix = "";
         for (Person p : recipients) {
-            content.append(prefix).append(p);
+            builder.append(prefix).append(p);
             prefix = ", ";
         }
-        content.append(EOL);
+        send(builder.toString());
     }
 
     /**
-     * Ajoute le sujet au contenu du mail.
+     * Envoie le sujet du mail.
      * Remarque : le sujet est encodé en base64 et sera décodé par le serveur.
      *
      * @param subject le sujet du mail
-     */
-    private void addSubject(@NonNull String subject) {
-        content.append("Subject: =?utf-8?B?")
-                .append(Base64.getEncoder().encodeToString(subject.getBytes()))
-                .append("?=")
-                .append(EOL);
-    }
-
-    /**
-     * Ajoute le texte au contenu du mail.
-     * Remarque : la séquence de terminaison (CRLF . CRLF) est ajoutée au contenu.
-     *
-     * @param body le texte du mail
-     */
-    private void addBody(@NonNull String body) {
-        content.append(EOL)
-                .append(body)
-                .append(EOL).append(".").append(EOL);
-    }
-
-    /**
-     * Envoi le contenu du mail au serveur.
-     *
-     * @return vrai si le serveur a accepté le mail, faux sinon
      * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
      */
-    private boolean sendContent() throws IOException {
-        return sendAndRead(content.toString(), CODE_OK);
+    private void sendSubject(@NonNull String subject) throws IOException {
+        send("Subject: =?utf-8?B?"
+                + Base64.getEncoder().encodeToString(subject.getBytes(StandardCharsets.UTF_8))
+                + "?=");
+    }
+
+    /**
+     * Envoie le contenu du mail.
+     *
+     * @param body le texte du mail
+     * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
+     */
+    private void sendBody(@NonNull String body) throws IOException {
+        send(EOL + body + EOL + ".");
     }
 
     /**
