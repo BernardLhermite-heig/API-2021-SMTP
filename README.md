@@ -4,7 +4,7 @@
 
 ## Description du projet
 
-Ce projet contient une application permettant de faire des pranks sous forme d'email forgé. L'utilisateur peut définir
+Ce projet contient une application permettant de faire des pranks sous forme d'emails forgés. L'utilisateur peut définir
 une liste de messages et de personnes victimes desdits pranks, ainsi qu'un nombre de groupes. L'application se charge
 ensuite de générer les emails en séparant la liste des personnes en plusieurs groupes et en sélectionnant un message
 aléatoirement. Les emails sont ensuite envoyés automatiquement aux différentes victimes.
@@ -25,7 +25,7 @@ La recette décrivant l'image se trouve dans le fichier [Dockerfile](server/Dock
 [openjdk11](https://hub.docker.com/_/openjdk).
 
 Les ports 25 et 8282 sont exposés grâce à la commande `EXPOSE` ce qui permet d'effectuer un mapping automatique si la
-commande `docker run` est exécutée avec le flag `-P`. Les ports peuvent ensuite être récupéré au moyen de `docker ps`
+commande `docker run` est exécutée avec le flag `-P`. Les ports peuvent ensuite être récupérés au moyen de `docker ps`
 ou `docker port <container id>`.
 
 ### Utilisation
