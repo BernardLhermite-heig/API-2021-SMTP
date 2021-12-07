@@ -19,11 +19,11 @@ public class Person {
    private String email;
 
    /**
-    * Créé une personne avec un nom, un prénom et une adresse mail.
+    * Créé une personne avec un nom, un prénom et une adresse email.
     *
     * @param firstName le prénom de la personne
     * @param lastName  le nom de la personne
-    * @param email     l'adresse mail de la personne
+    * @param email     l'adresse email de la personne
     * @throws IllegalArgumentException si l'email est vide
     */
    public Person(@NonNull String firstName, @NonNull String lastName, @NonNull String email) {
@@ -36,7 +36,7 @@ public class Person {
    }
 
    /**
-    * Obtiens une chaîne de caractères représentant la personne de la forme :
+    * Obtient une chaîne de caractères représentant la personne de la forme :
     * prénom nom <adresse>
     *
     * @return la chaîne de caractères

@@ -71,7 +71,7 @@ public class ConfigurationManager {
     }
 
     /**
-     * Vérifie les divers valeurs lues.
+     * Vérifie les diverses valeurs lues.
      *
      * @return vrai si les valeurs sont valides, faux autrement
      */
@@ -265,7 +265,7 @@ public class ConfigurationManager {
     /**
      * Retourne une liste non modifiable de victimes.
      *
-     * @return la liste des messages
+     * @return la liste des victimes
      */
     public List<String> getWitnessesEmails() {
         return Collections.unmodifiableList(witnessesEmails);

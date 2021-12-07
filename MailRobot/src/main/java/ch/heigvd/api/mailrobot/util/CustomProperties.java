@@ -3,7 +3,7 @@ package ch.heigvd.api.mailrobot.util;
 import java.util.Properties;
 
 /**
- * Étends la classe Properties pour faciliter son utilisation.
+ * Étend la classe Properties pour faciliter son utilisation.
  *
  * @author Stéphane Marengo
  * @author Loris Marzullo

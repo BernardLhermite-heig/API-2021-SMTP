@@ -160,7 +160,7 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi la chaîne de caractères passée en paramètre au serveur.
+     * Envoie la chaîne de caractères passée en paramètre au serveur.
      *
      * @param msg la chaîne à envoyer
      * @throws IOException si une erreur survient lors de l'envoi
@@ -172,7 +172,7 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi la chaîne de caractères passée en paramètre puis lis la réponse du serveur
+     * Envoie la chaîne de caractères passée en paramètre puis lit la réponse du serveur
      * et compare le code obtenu avec celui attendu.
      *
      * @param msg          la chaîne à envoyer
@@ -197,7 +197,7 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi une commande MAIL FROM avec l'adresse spécifiée.
+     * Envoie une commande MAIL FROM avec l'adresse spécifiée.
      *
      * @param address l'adresse de l'expéditeur
      * @return vrai si le serveur a accepté la commande, faux sinon
@@ -208,7 +208,7 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi une commande RCPT TO pour chaque adresse passée en paramètre de chacune des listes.
+     * Envoie une commande RCPT TO pour chaque adresse passée en paramètre de chacune des listes.
      *
      * @param recipients la liste des personnes destinataires
      * @param emails     la liste des adresses
@@ -230,7 +230,7 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi une commande RCPT TO avec l'adresse passée en paramètre.
+     * Envoie une commande RCPT TO avec l'adresse passée en paramètre.
      *
      * @param email l'adresse à envoyer
      * @return vrai si le serveur a accepté la commande, faux sinon
@@ -241,7 +241,7 @@ public class SmtpClient {
     }
 
     /**
-     * Envoi la commande DATA au serveur.
+     * Envoie la commande DATA au serveur.
      *
      * @return vrai si le serveur a accepté la commande, faux sinon
      * @throws IOException si une erreur survient lors de l'envoi ou de la lecture
@@ -289,6 +289,7 @@ public class SmtpClient {
 
     /**
      * Envoie le sujet du mail.
+     * <p>
      * Remarque : le sujet est encodé en base64 et sera décodé par le serveur.
      *
      * @param subject le sujet du mail
