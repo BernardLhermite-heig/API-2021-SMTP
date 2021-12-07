@@ -87,10 +87,6 @@ class ConfigurationManagerTest extends TestWithFiles {
     void itShouldThrowOnInvalidWitnesses() throws IOException {
         String key = "witnessesEmails";
 
-        editConfig(key, "");
-        assertThrows(MissingFormatArgumentException.class,
-                () -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, TARGETS_FILE));
-
         editConfig(key, "invalid email");
         assertThrows(MissingFormatArgumentException.class,
                 () -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, TARGETS_FILE));
@@ -113,6 +109,14 @@ class ConfigurationManagerTest extends TestWithFiles {
 
         assertThrows(MissingFormatArgumentException.class,
                 () -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE, MESSAGES_FILE, TARGETS_INVALID_FILE));
+    }
+
+    @Test
+    void itShouldAllowNoWitness() throws IOException {
+        editConfig("witnessesEmails", "");
+        ConfigurationManager manager = assertDoesNotThrow(() -> new ConfigurationManager(CONFIG_DIR, CONFIG_FILE,
+                MESSAGES_FILE, TARGETS_FILE));
+        assertTrue(manager.getWitnessesEmails().isEmpty());
     }
 
 }

@@ -90,10 +90,7 @@ public class ConfigurationManager {
             printError("numberOfGroups", "must be > 0");
             isValid = false;
         }
-        if (witnessesEmails.isEmpty()) {
-            printError("witnessesEmails", "must have at least 1 address");
-            isValid = false;
-        } else {
+        if (!witnessesEmails.isEmpty()) {
             for (String witness : witnessesEmails) {
                 if (!validateEmail("witnessesEmails", witness))
                     isValid = false;

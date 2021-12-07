@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implémentation du client SMTP. Les échanges différents échanges sont loggés.
+ * Implémentation d'un client SMTP. Les échanges avec le serveur sont loggés.
  *
  * @author Stéphane Marengo
  * @author Loris Marzullo
@@ -39,7 +39,9 @@ public class SmtpClient {
     private Socket socket;
 
     /**
-     * Construit un client qui utilisera l'hôte et le port fourni.
+     * Construit un client qui utilisera l'hôte, le port et le domaine fourni.
+     * <p>
+     * Remarque : la connexion avec l'hôte n'est pas établie à la construction
      *
      * @param host   l'adresse du serveur SMTP
      * @param port   le port à utiliser
@@ -57,6 +59,8 @@ public class SmtpClient {
 
     /**
      * Envoie au serveur le message passé en paramètre.
+     * <p>
+     * Remarque : une nouvelle connexion est établie à chaque envoi
      *
      * @param mail le message à envoyer
      * @return vrai si l'envoi s'est déroulé correctement, faux sinon
