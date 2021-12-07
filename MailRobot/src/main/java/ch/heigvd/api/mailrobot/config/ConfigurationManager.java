@@ -263,9 +263,9 @@ public class ConfigurationManager {
     }
 
     /**
-     * Retourne une liste non modifiable de victimes.
+     * Retourne une liste non modifiable des adresses en copie cachée.
      *
-     * @return la liste des victimes
+     * @return la liste des adresses en copie cachée
      */
     public List<String> getWitnessesEmails() {
         return Collections.unmodifiableList(witnessesEmails);
