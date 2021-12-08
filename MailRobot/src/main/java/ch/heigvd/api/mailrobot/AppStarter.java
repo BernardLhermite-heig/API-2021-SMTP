@@ -72,7 +72,7 @@ public class AppStarter {
             }
             System.out.println("Done sending pranks !");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            LOG.severe(e.getMessage());
         }
     }
 

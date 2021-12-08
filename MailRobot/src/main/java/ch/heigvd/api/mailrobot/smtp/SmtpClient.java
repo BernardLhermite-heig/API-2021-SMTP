@@ -97,37 +97,32 @@ public class SmtpClient {
 
             return read(CODE_OK);
         } catch (Exception e) {
-            LOG.severe("Error while trying to send mail.");
-            LOG.severe(e.getMessage());
+            LOG.severe("Error while trying to send mail: " + e.getMessage());
             return false;
         } finally {
             try {
                 if (socket != null && !socket.isClosed() && !sendQuit())
                     LOG.severe("Server did not accept QUIT command.");
             } catch (IOException e) {
-                LOG.severe("Error while sending QUIT command.");
-                LOG.severe(e.getMessage());
+                LOG.severe("Error while sending QUIT command: " + e.getMessage());
             }
             try {
                 if (in != null)
                     in.close();
             } catch (IOException e) {
-                LOG.severe("Error while closing input stream.");
-                LOG.severe(e.getMessage());
+                LOG.severe("Error while closing input stream: " + e.getMessage());
             }
             try {
                 if (out != null)
                     out.close();
             } catch (IOException e) {
-                LOG.severe("Error while closing output stream.");
-                LOG.severe(e.getMessage());
+                LOG.severe("Error while closing output stream: " + e.getMessage());
             }
             try {
                 if (socket != null)
                     socket.close();
             } catch (IOException e) {
-                LOG.severe("Error while closing socket.");
-                LOG.severe(e.getMessage());
+                LOG.severe("Error while closing socket: " + e.getMessage());
             }
         }
     }
