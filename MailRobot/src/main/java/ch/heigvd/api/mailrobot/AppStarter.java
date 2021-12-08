@@ -67,11 +67,12 @@ public class AppStarter {
 
                 if (!client.send(message)) {
                     System.out.println("Something went wrong.");
+                    return;
                 }
             }
             System.out.println("Done sending pranks !");
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "An error occurred.", e);
+            System.out.println(e.getMessage());
         }
     }
 

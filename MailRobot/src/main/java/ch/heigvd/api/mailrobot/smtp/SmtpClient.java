@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -97,30 +96,38 @@ public class SmtpClient {
             sendBody(mail.getBody());
 
             return read(CODE_OK);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error while trying to send mail.", e);
+        } catch (Exception e) {
+            LOG.severe("Error while trying to send mail.");
+            LOG.severe(e.getMessage());
             return false;
         } finally {
             try {
-                if (!socket.isClosed() && !sendQuit())
-                    LOG.log(Level.SEVERE, "Server did not accept QUIT command.");
+                if (socket != null && !socket.isClosed() && !sendQuit())
+                    LOG.severe("Server did not accept QUIT command.");
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error while sending QUIT command.", e);
+                LOG.severe("Error while sending QUIT command.");
+                LOG.severe(e.getMessage());
             }
             try {
-                in.close();
+                if (in != null)
+                    in.close();
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error while closing input.", e);
+                LOG.severe("Error while closing input stream.");
+                LOG.severe(e.getMessage());
             }
             try {
-                out.close();
+                if (out != null)
+                    out.close();
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error while closing output.", e);
+                LOG.severe("Error while closing output stream.");
+                LOG.severe(e.getMessage());
             }
             try {
-                socket.close();
+                if (socket != null)
+                    socket.close();
             } catch (IOException e) {
-                LOG.log(Level.SEVERE, "Error while closing socket.", e);
+                LOG.severe("Error while closing socket.");
+                LOG.severe(e.getMessage());
             }
         }
     }

@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -67,7 +66,7 @@ public class ConfigurationManager {
         targets = loadTargets(targetsFile);
 
         if (!validate())
-            throw new MissingFormatArgumentException("An error occurred. See logs for details.");
+            throw new MissingFormatArgumentException("An error occurred. See console for details.");
     }
 
     /**
@@ -138,13 +137,13 @@ public class ConfigurationManager {
     }
 
     /**
-     * Log une erreur avec le format suivant: field: msg
+     * Affiche une erreur dans la console avec le format suivant: field: msg
      *
      * @param field le nom du champ
      * @param msg   le message d'erreur
      */
     private void printError(String field, String msg) {
-        LOG.info(field + ": " + msg);
+        System.out.println(field + ": " + msg);
     }
 
     /**
@@ -183,7 +182,7 @@ public class ConfigurationManager {
             if (!witnesses.isEmpty())
                 witnessesEmails.addAll(Arrays.asList(witnesses.split(witnessSeparator)));
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error while parsing configuration file " + fileName + ".", e);
+            LOG.severe("Error while parsing configuration file " + fileName + ".");
             throw e;
         }
     }
@@ -205,14 +204,14 @@ public class ConfigurationManager {
                     builder.setLength(0);
                     continue;
                 }
-                builder.append(line).append(System.lineSeparator());
+                builder.append(line).append(EOL);
             }
 
             if (builder.length() > 0) {
                 messages.add(builder.toString());
             }
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error while parsing messages file " + fileName + ".", e);
+            LOG.severe("Error while parsing messages file " + fileName + ".");
             throw e;
         }
 
@@ -238,7 +237,7 @@ public class ConfigurationManager {
                 }
             }
         } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Error while parsing targets file " + fileName + ".", e);
+            LOG.severe("Error while parsing targets file " + fileName + ".");
             throw e;
         }
         return targets;
